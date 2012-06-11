@@ -1,0 +1,12 @@
+SetEnv APPLICATION_ENV nerijusdev
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s     [OR]
+RewriteCond %{REQUEST_FILENAME} -l     [OR]
+RewriteCond %{REQUEST_FILENAME} -d     [OR]
+RewriteCond %{REQUEST_URI} ^/trac.*$   [OR]
+RewriteCond %{REQUEST_URI} ^/.*\.js*$  [OR]
+RewriteCond %{REQUEST_URI} ^/.*\.ico*$ [OR]
+RewriteCond %{REQUEST_URI} ^/svn.*$
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ /nb_timetracker/index.php [NC,L]

@@ -1,0 +1,24 @@
+
+div#main {
+
+}
+
+.pointer
+{
+    cursor: pointer;
+}
+
+.mousehand
+{
+    cursor: pointer;
+}
+
+.oss-overlay
+{
+    position: absolute;
+    z-index: 2000;
+    background-color:black;
+    opacity: 0.4;
+}
+
+
