@@ -1,0 +1,11 @@
+{if isset( $options.mini_js ) and $options.mini_js}
+    <script type="text/javascript" src="{genUrl}/js/min.bundle.js"></script>
+{else}
+    <script type="text/javascript" src="{genUrl}/js/100-jquery.js"></script>
+    <script type="text/javascript" src="{genUrl}/js/110-jquery-ui.js"></script>
+    <script type="text/javascript" src="{genUrl}/js/120-jquery.datatables.js"></script>
+    <script type="text/javascript" src="{genUrl}/js/121-jquery.datatables.ext.js"></script>
+    <script type="text/javascript" src="{genUrl}/js/310-chosen.jquery.js"></script>
+    <script type="text/javascript" src="{genUrl}/js/800-bootstrap.js"></script>
+    <script type="text/javascript" src="{genUrl}/js/850-bootbox.js"></script>
+{/if}

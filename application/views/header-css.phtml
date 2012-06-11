@@ -1,0 +1,10 @@
+{if isset( $options.mini_css ) and $options.mini_css}
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/min.bundle.css" />
+{else}
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/100-jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/300-chosen.css" />
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/800-bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/810-override_container_app.css" />
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/820-bootstrap-override.css" />
+    <link rel="stylesheet" type="text/css" href="{genUrl}/css/900-style.css" />
+{/if}
