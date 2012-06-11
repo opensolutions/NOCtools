@@ -1,0 +1,57 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<div class="hero-unit">
+    <h1>Unexpected Error!</h1>
+    <p>We apologise but an unexpected server error has occured.</p>
+        
+    <p>
+        Please mail our support team with a description of what you were doing when the error
+        occured and we will rectify it as soon as possible. Our support team can be reached via
+        {mailto address="{$options.support.email.address}"}.
+    </p>
+</div>
+
+{if $options.phpSettings.display_errors}
+
+    <div class="alert alert-block">
+        <h4 class="alert-heading">Development Platform Detected!</h4>
+        Displaying of errors is enabled as <code>phpSettings.display_errors</code> is set
+        by default or in <code>application.ini</code>. Set to <code>false</code> in production
+        to present the display of errors.
+    </div>
+    
+    {foreach name=excepts from=$exceptions item=e}
+    
+        {if not $smarty.foreach.excepts.first}
+        	<hr />
+        {/if}
+    
+        <h2>Exception #{counter}</h2>
+        
+        <dl>
+            <dt>File</dt>
+            <dd>{$e->getFile()}</dd>
+        
+            <dt>Line</dt>
+            <dd>{$e->getLine()}</dd>
+        
+            <dt>Message</dt>
+            <dd>{$e->getMessage()}</dd>
+        
+            <dt>Code</dt>
+            <dd>{$e->getCode()}</dd>
+        </dl>
+    
+        <h4>Trace</h4>
+    
+        <pre>{$e->getTraceAsString()}</pre>
+    
+    {/foreach}
+
+{/if}
+
+</div>
+
+{include file="footer.phtml"}

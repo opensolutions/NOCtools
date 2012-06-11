@@ -150,8 +150,8 @@ class OSS_Controller_Action extends Zend_Controller_Action
         $this->view->controller = $this->_controller = $this->getRequest()->getParam( 'controller' );
         $this->view->action     = $this->_action     = $this->getRequest()->getParam( 'action'     );
 
-        //$this->view->doctype( 'HTML5' );
-        //$this->view->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
+        $this->view->doctype( 'HTML5' );
+        $this->view->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
 
         // FIXME for ajax requests, we shouldn't even bother with Smarty
         if( substr( $this->getRequest()->getParam( 'action' ), 0, 4 ) == 'ajax' || substr( $this->getRequest()->getParam( 'action' ), 0, 3 ) == 'cli' )
@@ -181,11 +181,7 @@ class OSS_Controller_Action extends Zend_Controller_Action
     */
     public function createView()
     {
-        $view = (
-                    $this->_bootstrap->getResource( 'view' ) === null
-                        ? $this->_bootstrap->getResource( 'smarty' )
-                        : $this->_bootstrap->getResource( 'view' )
-        );
+        $view = $this->_bootstrap->getResource( 'smarty' );
 
         $view->pagebase = '';
 
@@ -196,7 +192,7 @@ class OSS_Controller_Action extends Zend_Controller_Action
 
         $view->basepath = Zend_Controller_Front::getInstance()->getBaseUrl();
 
-        return $vView;
+        return $view;
     }
 
     /**
