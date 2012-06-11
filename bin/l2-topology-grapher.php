@@ -5,7 +5,7 @@
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
 
-    This file is part of the phpNOCtools package.
+    This file is part of the NOCtools package.
 
     Contact: Barry O'Donovan - barry (at) opensolutions (dot) ie
              http://www.opensolutions.ie/

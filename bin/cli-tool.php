@@ -5,7 +5,7 @@
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
 
-    This file is part of the phpNOCtools package.
+    This file is part of the NOCtools package.
 
     Contact: Barry O'Donovan - barry (at) opensolutions (dot) ie
              http://www.opensolutions.ie/
@@ -41,7 +41,7 @@
 require_once( dirname( __FILE__ ) . '/utils.inc' );
 define( 'APPLICATION_ENV', scriptutils_get_application_env() );
 
-define( 'SCRIPT_NAME', 'cli_tool - phpNOCtools CLI Management Tool (V' . APPLICATION_VERSION . ')' );
+define( 'SCRIPT_NAME', 'cli-tool - NOCtools CLI Management Tool (V' . APPLICATION_VERSION . ')' );
 define( 'SCRIPT_COPY', '(c) Copyright 2012 - ' . date( 'Y' ) . ' Open Source Solutions Limited' );
 
 error_reporting( E_ALL );

@@ -7,7 +7,7 @@
 #    Contact: Barry O'Donovan - barry (at) opensolutions (dot) ie
 #             http://www.opensolutions.ie/
 #
-#    This file is part of the phpNOCtools package.
+#    This file is part of the NOCtools package.
 #
 #    Redistribution and use in source and binary forms, with or without
 #    modification, are permitted provided that the following conditions are met:
