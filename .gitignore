@@ -15,5 +15,6 @@ var/templates_c/*.php
 var/log/20*
 
 
+public/.htaccess
 
 
