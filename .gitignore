@@ -4,9 +4,16 @@ bin/config.php
 .settings/
 
 application/config/application.ini
+application/configs/application.ini
+
 library/Minify
 library/OSS_SNMP
 library/Smarty
 library/Zend
+
+var/templates_c/*.php
+var/log/20*
+
+
 
 

@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
 
@@ -31,42 +30,56 @@
     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
-// let's time how long it takes to execute
-define( 'APPLICATION_STARTTIME', microtime( true ) );
+/**
+ * A class to encapsulate messages to be displayed on the webpages.
+ *
+ * These are the main required elements for this:
+ *
+ * 1. The OSS/Message.php class (this file)
+ * 2. The OSS/Smarty/functions/function.OSS_Message.php (to display the message on the view)
+ * 3. The relevent CSS classes in public/css/oss.css
+ *
+ * To use this, add a message to the view as follows:
+ *
+ * public function exampleAction() {
+ *     $this->view->ossAddMessage( new OSS_Message( 'This is a info message!', OSS_Message::INFO ) );
+ * }
+ *
+ * Multiple messages can be added of different kinds (INFO, ALERT, etc).
+ *
+ * Then to display these messages in your view (Smarty template) just include the following
+ * text (i.e. Smarty function):
+ *
+ * {OSS_Message}
+ *
+ */
+class OSS_Message_Block extends OSS_Message
+{
 
-error_reporting( E_ALL ^ E_NOTICE );
+    /**
+     * Elements for the action area
+     */
+    private $actions = null;
 
-mb_internal_encoding( 'UTF-8' );
-mb_language( 'uni' );
-setlocale( LC_ALL, "en_IE.utf8" );
 
-// Define path to application directory
-defined( 'APPLICATION_PATH' ) || define( 'APPLICATION_PATH', realpath( dirname( __FILE__ ) . '/../application' ) );
+    public function __construct( $message = '', $class = '', $isHTML = true )
+    {
+        parent::__construct( $message, $class, $isHTML );
+        $this->setType( self::TYPE_BLOCK );
+    }
 
-// Define application environment
-if( getenv( 'APPLICATION_ENV' ) === false )
-    die( 'ERROR: APPLICATION_ENV has not been defined!' );
+    public function addAction( $str )
+    {
+        if( $this->actions === null )
+            $this->actions = array();
 
-define( 'APPLICATION_ENV', getenv( 'APPLICATION_ENV' ) );
+        $this->actions[] = $str;
+    }
 
-if( getenv( 'APPLICATION_TESTING' ) )
-    define( 'APPLICATION_TESTING', getenv( 'APPLICATION_TESTING' ) );
-else
-    define( 'APPLICATION_TESTING', 0 );
-
-require_once( APPLICATION_PATH . '/../library/OSS/Version.php' );
-
-// Ensure library/ is in include_path
-set_include_path( implode( PATH_SEPARATOR, array( realpath( APPLICATION_PATH . '/../library' ), get_include_path() ) ) );
-
-// Zend_Application
-require_once 'Zend/Application.php';
-
-// Create application, bootstrap, and run
-$application = new Zend_Application( APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini' );
-
-$application->bootstrap()->run();
-
-$scriptExecutionTime = microtime( true ) - APPLICATION_STARTTIME;
+    public function getActions()
+    {
+        return $this->actions;
+    }
+}

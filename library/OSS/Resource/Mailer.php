@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
 
@@ -31,42 +30,64 @@
     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
-// let's time how long it takes to execute
-define( 'APPLICATION_STARTTIME', microtime( true ) );
+/**
+ * Class to set up the mail transport
+ *
+ * @category OSS
+ * @package OSS_Bootstrap_Resources
+ * @copyright Copyright (c) 2009 Open Source Solutions Limited <http://www.opensolutions.ie/>
+ */
+class OSS_Resource_Mailer extends Zend_Application_Resource_ResourceAbstract
+{
+    /**
+     * Holds the Mailer instance
+     *
+     * @var
+     */
+    protected $_mailer;
 
-error_reporting( E_ALL ^ E_NOTICE );
 
-mb_internal_encoding( 'UTF-8' );
-mb_language( 'uni' );
-setlocale( LC_ALL, "en_IE.utf8" );
+    public function init()
+    {
+        // Return mailer so bootstrap will store it in the registry
+        return $this->getMailer();
+    }
 
-// Define path to application directory
-defined( 'APPLICATION_PATH' ) || define( 'APPLICATION_PATH', realpath( dirname( __FILE__ ) . '/../application' ) );
 
-// Define application environment
-if( getenv( 'APPLICATION_ENV' ) === false )
-    die( 'ERROR: APPLICATION_ENV has not been defined!' );
+    public function getMailer()
+    {
+        if( null === $this->_mailer )
+        {
+            $options = $this->getOptions();
 
-define( 'APPLICATION_ENV', getenv( 'APPLICATION_ENV' ) );
+            if( count( $options ) )
+            {
+                if( isset( $options['auth'] ) )
+                    $config = $options;
+                else
+                    $config = array();
 
-if( getenv( 'APPLICATION_TESTING' ) )
-    define( 'APPLICATION_TESTING', getenv( 'APPLICATION_TESTING' ) );
-else
-    define( 'APPLICATION_TESTING', 0 );
+                $transport = new Zend_Mail_Transport_Smtp( $options['smtphost'], $config );
+                
+                if( isset( $options['helo'] ) )
+                {
+                    $protocol = new Zend_Mail_Protocol_Smtp( $options['smtphost'] );
+                    $protocol->connect();
+                    $protocol->helo( 'www.opensolutions.ie' );
+                
+                    $transport->setConnection( $protocol );
+                }
+                
+                Zend_Mail::setDefaultTransport( $transport );
 
-require_once( APPLICATION_PATH . '/../library/OSS/Version.php' );
+                $this->_mailer = $transport;
+            }
+        }
 
-// Ensure library/ is in include_path
-set_include_path( implode( PATH_SEPARATOR, array( realpath( APPLICATION_PATH . '/../library' ), get_include_path() ) ) );
+        return $this->_mailer;
+    }
 
-// Zend_Application
-require_once 'Zend/Application.php';
 
-// Create application, bootstrap, and run
-$application = new Zend_Application( APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini' );
-
-$application->bootstrap()->run();
-
-$scriptExecutionTime = microtime( true ) - APPLICATION_STARTTIME;
+}

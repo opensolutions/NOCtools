@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
 
@@ -31,42 +30,29 @@
     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
-// let's time how long it takes to execute
-define( 'APPLICATION_STARTTIME', microtime( true ) );
 
-error_reporting( E_ALL ^ E_NOTICE );
+/**
+ * Filter to remove characters that wouldn't be in a floating point number
+ *
+ * Specifically, it removes anything not in the class [0123456789\.\-]
+ *
+ * @author Barry O'Donovan <barry@opensolutions.ie>
+ * @category   OSS
+ * @package    OSS_Filter
+ * @copyright  Copyright (c) 2009 Open Source Solutions Limited <http://www.opensolutions.ie/>
+ *
+ */
+class OSS_Filter_Float implements Zend_Filter_Interface
+{
 
-mb_internal_encoding( 'UTF-8' );
-mb_language( 'uni' );
-setlocale( LC_ALL, "en_IE.utf8" );
+    /**
+    *
+    */
+    public function filter($value)
+    {
+        return preg_replace( "/[^0123456789\.\-]/", '', (string) $value );
+    }
 
-// Define path to application directory
-defined( 'APPLICATION_PATH' ) || define( 'APPLICATION_PATH', realpath( dirname( __FILE__ ) . '/../application' ) );
-
-// Define application environment
-if( getenv( 'APPLICATION_ENV' ) === false )
-    die( 'ERROR: APPLICATION_ENV has not been defined!' );
-
-define( 'APPLICATION_ENV', getenv( 'APPLICATION_ENV' ) );
-
-if( getenv( 'APPLICATION_TESTING' ) )
-    define( 'APPLICATION_TESTING', getenv( 'APPLICATION_TESTING' ) );
-else
-    define( 'APPLICATION_TESTING', 0 );
-
-require_once( APPLICATION_PATH . '/../library/OSS/Version.php' );
-
-// Ensure library/ is in include_path
-set_include_path( implode( PATH_SEPARATOR, array( realpath( APPLICATION_PATH . '/../library' ), get_include_path() ) ) );
-
-// Zend_Application
-require_once 'Zend/Application.php';
-
-// Create application, bootstrap, and run
-$application = new Zend_Application( APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini' );
-
-$application->bootstrap()->run();
-
-$scriptExecutionTime = microtime( true ) - APPLICATION_STARTTIME;
+}

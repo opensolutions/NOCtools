@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
 
@@ -31,42 +30,38 @@
     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
-// let's time how long it takes to execute
-define( 'APPLICATION_STARTTIME', microtime( true ) );
 
-error_reporting( E_ALL ^ E_NOTICE );
+    /**
+     * Function to generate a Zend Controller URL from Smarty templates.
+     *
+     * The URL is made up of parameters as supplied in the $params associative array.
+     * 'module', 'controller' and 'action' are special parameters which indicate the module,
+     * controller and action to call. Any other parameters are added as additional name / value
+     * pairs.
+     *
+     * Calls OSS_Utils::genUrl()
+     *
+     * @param array $params An array of the parameters to make up the URL
+     * @param Smarty $smarty A reference to the Smarty object
+     * @return string The URL to use
+     */
+    function smarty_function_genUrl( $params, &$smarty )
+    {
+        if( !isset( $params['controller'] ) )
+            $params['controller'] = false;
 
-mb_internal_encoding( 'UTF-8' );
-mb_language( 'uni' );
-setlocale( LC_ALL, "en_IE.utf8" );
+        if( !isset( $params['action'] ) )
+            $params['action'] = false;
 
-// Define path to application directory
-defined( 'APPLICATION_PATH' ) || define( 'APPLICATION_PATH', realpath( dirname( __FILE__ ) . '/../application' ) );
+        if( !isset( $params['module'] ) )
+            $params['module'] = false;
 
-// Define application environment
-if( getenv( 'APPLICATION_ENV' ) === false )
-    die( 'ERROR: APPLICATION_ENV has not been defined!' );
+        $p = $params;
+        unset( $p['controller'] );
+        unset( $p['action'] );
+        unset( $p['module'] );
 
-define( 'APPLICATION_ENV', getenv( 'APPLICATION_ENV' ) );
-
-if( getenv( 'APPLICATION_TESTING' ) )
-    define( 'APPLICATION_TESTING', getenv( 'APPLICATION_TESTING' ) );
-else
-    define( 'APPLICATION_TESTING', 0 );
-
-require_once( APPLICATION_PATH . '/../library/OSS/Version.php' );
-
-// Ensure library/ is in include_path
-set_include_path( implode( PATH_SEPARATOR, array( realpath( APPLICATION_PATH . '/../library' ), get_include_path() ) ) );
-
-// Zend_Application
-require_once 'Zend/Application.php';
-
-// Create application, bootstrap, and run
-$application = new Zend_Application( APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini' );
-
-$application->bootstrap()->run();
-
-$scriptExecutionTime = microtime( true ) - APPLICATION_STARTTIME;
+        return OSS_Utils::genUrl( $params['controller'], $params['action'], $params['module'], $p );
+    }
