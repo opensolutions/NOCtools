@@ -61,6 +61,10 @@ require_once( APPLICATION_PATH . '/../library/OSS/Version.php' );
 // Ensure library/ is in include_path
 set_include_path( implode( PATH_SEPARATOR, array( realpath( APPLICATION_PATH . '/../library' ), get_include_path() ) ) );
 
+
+// face it, we want this:
+require_once 'OSS_SNMP/OSS/SNMP.php';
+
 // Zend_Application
 require_once 'Zend/Application.php';
 

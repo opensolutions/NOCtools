@@ -34,15 +34,15 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/**
- * CLI script
- */
-
 require_once( dirname( __FILE__ ) . '/utils.inc' );
 define( 'APPLICATION_ENV', scriptutils_get_application_env() );
 
-define( 'SCRIPT_NAME', 'cli-tool - NOCtools CLI Management Tool (V' . APPLICATION_VERSION . ')' );
-define( 'SCRIPT_COPY', '(c) Copyright 2012 - ' . date( 'Y' ) . ' Open Source Solutions Limited' );
+define( 'SCRIPT_NAME', 'noctool - NOCtools CLI Management Tool (V' . APPLICATION_VERSION . ')' );
+
+if( date( 'Y' ) != '2012' )
+    define( 'SCRIPT_COPY', '(c) Copyright 2012 - ' . date( 'Y' ) . ' Open Source Solutions Limited' );
+else
+    define( 'SCRIPT_COPY', '(c) Copyright 2012 Open Source Solutions Limited' );
 
 error_reporting( E_ALL );
 ini_set( 'display_errors', true );
@@ -58,10 +58,7 @@ set_include_path( implode( PATH_SEPARATOR,
     )
 );
 
-/** Zend_Application */
 require_once 'Zend/Application.php';
-
-// Create application, bootstrap, and run
 
 $application = new Zend_Application( APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini' );
 
@@ -166,9 +163,7 @@ if( isset( $opts->a ) )
         else
             $front->getRequest()->setParam( 'cli-verbose', false );
         
-        //$front->addModuleDirectory( APPLICATION_PATH . '/modules' );
-
-        $application->run();
+          $application->run();
 
         if( $opts->v )
             echo '[' . date( 'Y-m-d H:i:s' ) . "] Completed {$module}/{$controller}/{$action}.\n";
