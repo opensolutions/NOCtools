@@ -58,6 +58,9 @@ set_include_path( implode( PATH_SEPARATOR,
     )
 );
 
+// face it, we want this:
+require_once 'OSS_SNMP/OSS/SNMP.php';
+
 require_once 'Zend/Application.php';
 
 $application = new Zend_Application( APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini' );

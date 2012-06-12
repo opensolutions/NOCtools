@@ -182,4 +182,16 @@ class CdpController extends OSS_Controller_Action
 
         return $locations;
     }
+
+    public function cliGenerateDeviceIniAction()
+    {
+        $root = new \OSS\SNMP( $this->_options['cdp']['default_root'], $this->_options['community'] );
+        $devices = array();
+        $devices = $root->useCisco_CDP()->crawl( $devices, null );
+        ksort( $devices, SORT_REGULAR );
+
+        foreach( $devices as $name => $details )
+            echo "devices[] = \"{$name}\"\n";
+    }
+
 }

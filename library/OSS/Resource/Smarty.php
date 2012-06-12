@@ -83,10 +83,10 @@ class OSS_Resource_Smarty extends Zend_Application_Resource_ResourceAbstract
                 $view = new OSS_View_Smarty(
                     $options['templates'],
                     array(
-                        'cache_dir'   => $options['cache'],
-                        'config_dir'  => $options['config'],
-                        'compile_dir' => $options['compiled'],
-                        'plugins_dir' => $options['plugins']
+                        'cache_dir'   => isset( $options['cache'] ) ? $options['cache'] : null,
+                        'config_dir'  => isset( $options['config'] ) ? $options['config'] : null,
+                        'compile_dir' => isset( $options['compiled'] ) ? $options['compiled'] : null,
+                        'plugins_dir' => isset( $options['plugins'] ) ? $options['plugins'] : null
                     )
                 );
 

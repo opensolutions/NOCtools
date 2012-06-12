@@ -1,0 +1,61 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<h1>NOCtools - VLAN Utilities - Availability / Comparison</h1>
+
+<br />
+
+{OSS_Message}
+
+<div class="row">
+
+    <div class="span12">
+        <p>
+            This tool will allow you to see what VLANs are available on a switch
+            and perform a side by side comparison with other switch(es).
+        </p>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="span12 well">
+        <form action="{genUrl controller="vlan" action="compare"}" method="post">
+
+        <div class="span3">
+                <label>Source Node IP / Hostname:</label>
+                {if isset( $_devices ) and count( $_devices )}
+                    <select name="source" data-placeholder="Choose a device..." class="chzn-select span3">
+                    {foreach $_devices as $d}
+                        <option value="{$d}" {if ( isset( $source ) and $source eq $d ) or ( !isset( $source ) and isset( $options.cdp.default_root ) and $options.cdp.default_root eq $d )}selected="selected"{/if}>{$d}</option>{$d}</option>
+                    {/foreach}
+                    </select>
+                {else}
+                    <input type="text" class="span3" name="source"
+                        value="{if isset( $source )}{$source}{elseif isset( $options.cdp.default_root )}{$options.cdp.default_root}{/if}"
+                        placeholder="IP / Hostname..."
+                    />
+                {/if}
+                <br /><br />
+                <input type="submit" value="Submit &raquo;" class="btn" />
+        </div>
+
+        <div class="span6">
+                <label>List of optional device(s) to compare with:</label>
+                    <select data-placeholder="Choose optional device(s)..." class="chzn-select span3" multiple="multiple" name="odevices[]">
+                    {foreach $_devices as $d}
+                        <option value="{$d}">{$d}</option>
+                    {/foreach}
+                </select>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+</div>
+
+{include file="footer.phtml"}

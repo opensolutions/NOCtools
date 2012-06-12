@@ -62,6 +62,13 @@ class OSS_Controller_Action extends Zend_Controller_Action
     protected $_config = null;
 
     /**
+    * Zend_Config_Ini of device hostnames / IP addresses to populate dropdowns with / etc
+    *
+    * @var object Zend_Config_Ini of device hostnames / IP addresses to populate dropdowns with / etc
+    */
+    protected $_devices = null;
+
+    /**
      * A variable to hold the invoked controller name
      *
      * @var string The invoked controller name
@@ -154,13 +161,25 @@ class OSS_Controller_Action extends Zend_Controller_Action
         $this->view->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
 
         // FIXME for ajax requests, we shouldn't even bother with Smarty
-        if( substr( $this->getRequest()->getParam( 'action' ), 0, 4 ) == 'ajax'
-                || substr( $this->getRequest()->getParam( 'action' ), 0, 3 ) == 'img'
-                || substr( $this->getRequest()->getParam( 'action' ), 0, 3 ) == 'cli' )
+        if( substr( $this->getRequest()->getActionName(), 0, 4 ) == 'ajax'
+                || substr( $this->getRequest()->getActionName(), 0, 3 ) == 'img'
+                || substr( $this->getRequest()->getActionName(), 0, 3 ) == 'cli' )
             Zend_Controller_Action_HelperBroker::removeHelper( 'viewRenderer' );
+
+        if( substr( $this->getRequest()->getActionName(), 0, 3 ) == 'cli' && PHP_SAPI != 'cli' )
+        {
+            die( "Attempt to access CLI function from non-CLI SAPI\n" );
+        }
 
         // if we issue a redirect, we want it to exit immediatly
         $this->getHelper( 'Redirector' )->setExit( true );
+
+        // load device / node array
+        if( is_readable( APPLICATION_PATH . '/configs/devices.ini' ) )
+        {
+            $this->_devices = new Zend_Config_Ini( APPLICATION_PATH . '/configs/devices.ini' );
+            $this->view->_devices = $this->_devices->devices;
+        }
     }
 
 
