@@ -36,8 +36,7 @@
 /**
  * TopologyController
  *
- * @author
- * @version
+ * @author Barry O'Donovan <barry@opensolutions.ie>
  */
 
 class TopologyController extends OSS_Controller_Action
@@ -54,7 +53,6 @@ class TopologyController extends OSS_Controller_Action
 
     public function l2GraphAction()
     {
-        
         $rootDevice = new \OSS\SNMP( $this->_options['topology']['l2grapher']['root'], $this->_options['community'] );
         
         $devices = array();
@@ -88,7 +86,7 @@ END_GRAPH;
             return substr( $swname, strpos( $swname, '.' ) + 1, strpos( $swname, '.', strpos( $swname, '.' ) + 1 ) - strpos( $swname, '.' ) - 1 );
         }
         
-        // with this function, allocate switches to localtions
+        // with this function, allocate switches to locations
         $locations = array();
         foreach( $devices as $devName => $devNeighbours )
         {
@@ -148,6 +146,8 @@ END_GRAPH;
             }
         
             $digraph .= "    }\n\n";
+            
+
         }
         
         // now, add the interswitch connections

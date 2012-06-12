@@ -13,7 +13,7 @@ library/Zend
 
 var/templates_c/*.php
 var/log/20*
-
+var/session/sess_*
 
 public/.htaccess
 
