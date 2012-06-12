@@ -61,7 +61,7 @@ TOPDIR=`dirname "$0"`/..
 if [[ -e $LIBDIR/Minify ]]; then
     echo Minify exists - skipping!
 else
-    git clone git@github.com:opensolutions/Minify.git $LIBDIR/Minify
+    git clone git://github.com/opensolutions/Minify.git $LIBDIR/Minify
 fi
 
 # OSS_SNMP
@@ -69,7 +69,7 @@ fi
 if [[ -e $LIBDIR/OSS_SNMP ]]; then
     echo OSS_SNMP exists - skipping!
 else
-    git clone git@github.com:opensolutions/OSS_SNMP.git $LIBDIR/OSS_SNMP
+    git clone git://github.com/opensolutions/OSS_SNMP.git $LIBDIR/OSS_SNMP
 fi
 
 # Zend

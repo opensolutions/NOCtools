@@ -59,7 +59,13 @@ class TopologyController extends OSS_Controller_Action
         
         $devices = array();
         
-        $links = $rootDevice->useCisco_CDP()->linkTopology( $rootDevice->useCisco_CDP()->crawl( $devices, null ) );
+        $confTopologyIgnore = array(
+            'edge1.ixdub1.brs.ie', 'edge2.ixdub1.networkrecovery.ie',
+                'FINEOS_DR_Site', 'CInfinity-inside-SW04', 'Luzern-sw-01',
+                    'PHNRDUBESX03.nrintdub.lan'
+                    );
+                    
+        $links = $rootDevice->useCisco_CDP()->linkTopology( $rootDevice->useCisco_CDP()->crawl( $devices, null, $confTopologyIgnore ) );
         
         ////////////////////////////////////////////////
         // Start to build up the GraphViz graph
@@ -144,7 +150,6 @@ END_GRAPH;
             $digraph .= "    }\n\n";
         }
         
-        
         // now, add the interswitch connections
         //
         // if it's a LAG link, I change the colour to red
@@ -169,7 +174,13 @@ END_GRAPH;
     
         $digraph .= "\n\n}\n";
     
-        echo $digraph;
+        file_put_contents( APPLICATION_PATH . '/../var/tmp/l2-topology.dot', $digraph );
+        
+        system( '/usr/bin/dot -T png -o ' . APPLICATION_PATH . '/../var/tmp/l2-topology.png ' . APPLICATION_PATH . '/../var/tmp/l2-topology.dot' );
+      
+        header( 'content-type: image/png' );
+        readfile( APPLICATION_PATH . '/../var/tmp/l2-topology.png' );  
+die();        
         
         
     }

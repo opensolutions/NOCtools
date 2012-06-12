@@ -42,6 +42,8 @@ mb_internal_encoding( 'UTF-8' );
 mb_language( 'uni' );
 setlocale( LC_ALL, "en_IE.utf8" );
 
+date_default_timezone_set( 'Europe/Dublin' );
+
 // Define path to application directory
 defined( 'APPLICATION_PATH' ) || define( 'APPLICATION_PATH', realpath( dirname( __FILE__ ) . '/../application' ) );
 

@@ -56,6 +56,7 @@ class OSS_Utils
      */
     public static function genUrl( $controller = false, $action = false, $module = false, $params = array(), $host = null )
     {
+        $params[ '_noHost' ] = true;
         $url = Zend_Controller_Front::getInstance()->getBaseUrl();
 
         if( isset( $params[ '_noHost' ] ) && $params[ '_noHost' ] )
