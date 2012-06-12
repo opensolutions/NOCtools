@@ -154,7 +154,9 @@ class OSS_Controller_Action extends Zend_Controller_Action
         $this->view->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
 
         // FIXME for ajax requests, we shouldn't even bother with Smarty
-        if( substr( $this->getRequest()->getParam( 'action' ), 0, 4 ) == 'ajax' || substr( $this->getRequest()->getParam( 'action' ), 0, 3 ) == 'cli' )
+        if( substr( $this->getRequest()->getParam( 'action' ), 0, 4 ) == 'ajax'
+                || substr( $this->getRequest()->getParam( 'action' ), 0, 3 ) == 'img'
+                || substr( $this->getRequest()->getParam( 'action' ), 0, 3 ) == 'cli' )
             Zend_Controller_Action_HelperBroker::removeHelper( 'viewRenderer' );
 
         // if we issue a redirect, we want it to exit immediatly

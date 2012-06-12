@@ -3,10 +3,13 @@
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="{genUrl}">NOCtools</a>
-            
+
             <ul class="nav">
-                <li class="active">
+                <li {if $controller eq 'index'}class="active"{/if}>
                     <a href="{genUrl}">Home</a>
+                </li>
+                <li {if $controller eq 'cdp'}class="active"{/if}>
+                    <a href="{genUrl controller="cdp"}">CDP</a>
                 </li>
             </ul>
         </div>

@@ -4,9 +4,67 @@
 
 {include file="cdp/cdp-header.phtml"}
 
+{if isset( $neighbours )}
 
+    <ul class="thumbnails">
+        <li class="span12">
+            <a href="{genUrl controller="cdp" action="img-neighbours-graph" cdp_root=$cdp_root}" target="_blank">
+                <img src="{genUrl controller="cdp" action="img-neighbours-graph" cdp_root=$cdp_root}" />
+            </a>
+        </li>
+    </ul>
 
+    <div class="row">
 
+    {assign var="count" value=0}
+    {foreach $neighbours as $name => $connections}
+
+        {if $count neq 0 and $count % 2 eq 0}
+            </div>
+            <div class="row">
+        {/if}
+
+        <div class="span6">
+            <div class="well">
+                <h3>
+                    {$name}
+                    <a class="btn btn-mini btn-info" href="{genUrl controller="cdp" action="neighbours" cdp_root=urlencode( $name )}">Neighbours</a>
+                </h3>
+
+                {assign var="portId" value=$connections.0.localPortId}
+
+                <p>
+                    {assign var="platforms" value=$host->useCisco_CDP()->neighbourPlatforms()}
+                    <span class="label">{$platforms.$portId}</span>
+
+                    {assign var="capabilities" value=$host->useCisco_CDP()->neighbourCapabilities( $portId, 1 )}
+                    {foreach $capabilities as $c}<span class="label label-info">{$c}</span>&nbsp;{/foreach}
+
+                </p>
+
+                <h4>Connections (local =&gt; remote)</h4>
+
+                <ul>
+                {foreach $connections as $connection}
+                    <li> {if $connection.isLAG}[LAG]{/if} {$connection.localPort} =&gt; {$connection.remotePort}</li>
+                {/foreach}
+                </ul>
+
+                <br />
+                <h4>Version</h4>
+
+                {assign var="versions" value=$host->useCisco_CDP()->neighbourVersions()}
+
+                <pre>{$versions.$portId}</pre>
+            </div>
+        </div>
+
+        {assign var="count" value=$count+1}
+    {/foreach}
+
+    </div>
+
+{/if}
 
 </div>
 

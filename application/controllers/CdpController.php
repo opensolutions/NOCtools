@@ -3,15 +3,15 @@
 /*
     Copyright (c) 2012, Open Source Solutions Limited, Dublin, Ireland
     All rights reserved.
-    
+
     This file is part of the NOCtools package.
-    
+
     Contact: Barry O'Donovan - barry (at) opensolutions (dot) ie
     http://www.opensolutions.ie/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
-    
+
     * Redistributions of source code must retain the above copyright
     notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
@@ -20,7 +20,7 @@
     * Neither the name of Open Source Solutions Limited nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
-    
+
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -54,15 +54,58 @@ class CdpController extends OSS_Controller_Action
     public function neighboursAction()
     {
         $this->view->cdp_root = $host = $this->_getParam( 'cdp_root', '' );
-        
+
+        if( strlen( $host ) )
+        {
+            try
+            {
+                $host = new \OSS\SNMP( $host, $this->_options['community'] );
+                $this->view->host = $host;
+                $this->view->neighbours = $host->useCisco_CDP()->neighbours();
+            }
+            catch( \OSS\Exception $e )
+            {
+                $this->addMessage( "Could not perform CDP neighbour discovery on the requested host", OSS_Message::ERROR );
+                $this->_forward( 'index' );
+            }
+        }
+    }
+
+    public function imgNeighboursGraphAction()
+    {
+        $this->view->cdp_root = $host = $this->_getParam( 'cdp_root', '' );
+
         if( !strlen( $host ) )
         {
-            $this->addMessage( "You must provide a hostname or IP address for CDP neighbour discover", OSS_Message::ERROR );
+            header( 'content-type: text/plain' );
+            echo 'You must provide a hostname or IP address for CDP neighbour discovery';
+            return;
+        }
+
+        try
+        {
+            $host = new \OSS\SNMP( $host, $this->_options['community'] );
+            $this->view->host = $host;
+            $this->view->neighbours = $host->useCisco_CDP()->neighbours();
+        }
+        catch( \OSS\Exception $e )
+        {
+            $this->addMessage( "Could not perform CDP neighbour discovery on the requested host", OSS_Message::ERROR );
             $this->_forward( 'index' );
         }
-        
-        $host = new \OSS\SNMP( $host, $this->_options['community'] );
-        
-        $this->view->neighnours = $host->useCisco_CDP()->neighbours();
+
+        $this->view->deviceId = $host->useCisco_CDP()->id();
+        header( 'content-type: image/png' );
+
+        $file = 'img-neighbour-graph-' . OSS_String::random( 16, true, true, true );
+
+        file_put_contents( APPLICATION_PATH . '/../var/tmp/' . $file . '.dot', $this->view->render( 'cdp/img-neighbours-graph.dot' ) );
+
+        system( '/usr/bin/dot -T png -o ' . APPLICATION_PATH . '/../var/tmp/'
+                    . $file . '.png ' . APPLICATION_PATH . '/../var/tmp/' . $file . '.dot' );
+
+        header( 'content-type: image/png' );
+        readfile( APPLICATION_PATH . '/../var/tmp/' . $file . '.png' );
     }
+
 }

@@ -1,0 +1,46 @@
+digraph G {
+
+    nodesep = 2;
+    ranksep = 2;
+
+    "{$deviceId}" [ shape="plaintext", label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+            {assign var="ports" value=0}
+            {include assign="portGraph" file="./img-neighbours-graph-ports.dot" scope=parent}
+            <TR><TD COLSPAN="{$ports}">{$name}</TD></TR>
+            {$portGraph}
+        </TABLE>
+    >];
+
+
+    {* and the connected devices *}
+
+    {foreach $neighbours as $name => $connections}
+        "{$name}" [ shape="plaintext", label=<
+            <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+                {assign var="ports" value=0}
+                <TR>
+                    {foreach $connections as $connection}
+                        {assign var="ports" value=$ports+1}
+                        <TD PORT="{$connection.remotePort}">{$connection.remotePort}</TD>
+                    {/foreach}
+                </TR>
+                <TR><TD COLSPAN="{$ports}">{$name}</TD></TR>
+            </TABLE>
+        >];
+    {/foreach}
+
+    {* and the connections *}
+
+    {foreach $neighbours as $name => $connections}
+        {foreach $connections as $connection}
+            "{$deviceId}":"{$connection.localPort}" -> "{$name}":"{$connection.remotePort}" [
+                            arrowhead = none, arrowtail= none{if $connection.isLAG}, color="red"{/if}
+            ];
+
+        {/foreach}
+    {/foreach}
+
+}
+
+

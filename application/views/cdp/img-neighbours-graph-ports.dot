@@ -1,0 +1,10 @@
+
+<TR>
+    {* we'll iterate over this devices connections to find the device's ports that we need to graph *}
+    {foreach $neighbours as $name => $connections}
+        {foreach $connections as $idx => $connection}
+            {assign var="ports" value=$ports+1}
+            <TD PORT="{$connection.localPort}">{$connection.localPortName}</TD>
+        {/foreach}
+    {/foreach}
+</TR>
