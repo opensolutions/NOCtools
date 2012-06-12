@@ -1,0 +1,63 @@
+
+digraph G {
+
+    nodesep = 2;
+    ranksep = 2;
+
+    {*
+        Define devices in the appropriate locations in GraphViz
+        To try and make the connections 'better', we alternate ports above and below the device name via $cnt
+    *}
+
+{assign var="cnt" value=0}
+{foreach $locations as $feLocation => $feSwitches}
+
+    {* define subgraph / cluster display parameters *}
+
+    subgraph "cluster_{$feLocation}" {
+        style=filled;
+        color=lightgrey;
+        node [style=filled,fillcolor=white];
+        label = "{$feLocation|upper}";
+
+        {* now add the switches in this location to this location *}
+        {foreach $feSwitches as $feSwitch}
+            {assign var="ports" value=0}
+            {include assign="portGraph" file="./l2-topology-graph-ports.dot" scope=parent}
+
+            "{$feSwitch}" [ shape="plaintext", label=<
+
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+
+                    {if $cnt % 2 eq 0}
+                        <TR><TD COLSPAN="{$ports}">{$feSwitch}</TD></TR>
+                        {$portGraph}
+                    {else}
+                        {$portGraph}
+                        <TR><TD COLSPAN="{$ports}">{$feSwitch}</TD></TR>
+                    {/if}
+
+                </TABLE>
+
+            >];
+            {assign var="cnt" value=$cnt+1}
+        {/foreach}
+    }
+{/foreach}
+
+
+// now, add the interswitch connections
+//
+// if it's a LAG link, I change the colour to blue
+
+{foreach $links as $feSwitch1 => $feConnectedSwitches}
+{foreach $feConnectedSwitches as $feSwitch2 => $fePorts}
+{foreach $fePorts as $feLocalPort => $feRemotePortDetails}
+    "{$feSwitch1}":"{$feLocalPort}" -> "{$feSwitch2}":"{$feRemotePortDetails.remotePort}" [
+            arrowhead = "none", arrowtail = "none"{if $feRemotePortDetails.isLAG}, color="blue"{/if} ];
+{/foreach}
+{/foreach}
+{/foreach}
+
+}
+

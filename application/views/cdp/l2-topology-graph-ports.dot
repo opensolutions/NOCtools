@@ -1,0 +1,10 @@
+
+<TR>
+    {* we'll iterate over this switches neighbours to find the switch's ports that we need to graph *}
+    {foreach $devices.$feSwitch as $feNeighbour => $feConnections}
+        {foreach $feConnections as $portDetails}
+            {assign var="ports" value=$ports+1}
+            <TD PORT="{$portDetails.localPort}">{$portDetails.localPortName}</TD>
+        {/foreach}
+    {/foreach}
+</TR>

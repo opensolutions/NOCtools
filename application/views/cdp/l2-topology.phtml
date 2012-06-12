@@ -1,0 +1,63 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<h1>NOCtools - Cisco Discovery Protocol Utilities - L2 Topology</h1>
+
+<br />
+
+{OSS_Message}
+
+<div class="row">
+
+    <div class="span12">
+        <p>
+            This utility will graph your L2 topology based on CDP neighbours.
+        </p>
+        <p>
+            Start by entering the <em>root node</em> where CDP discovery will start, edit the
+            CDP hosts you want to ignore (will not appear on graph at all) and generate the graph.
+        </p>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="span12 well">
+        <form action="{genUrl controller="cdp" action="l2-topology"}" method="post">
+
+        <div class="span3">
+                <label>Root Node IP / Hostname:</label>
+                <input type="text" class="span3" name="cdp_root"
+                    value="{if isset( $cdp_root )}{$cdp_root}{elseif isset( $options.cdp.default_root )}{$options.cdp.default_root}{/if}"
+                    placeholder="IP / Hostname..."
+                />
+                <input type="submit" value="Generate &raquo;" class="btn" />
+        </div>
+
+        <div class="span6">
+                <label>List of CDP neighbour names to ignore - one per line:</label>
+                <textarea class="span6" name="ignoreList" rows="4">{$ignoreList}</textarea>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+
+{if isset( $file )}
+
+    <ul class="thumbnails">
+        <li class="span12">
+            <a href="{genUrl controller="cdp" action="img-l2-topology" file=$file}" target="_blank">
+                <img src="{genUrl controller="cdp" action="img-l2-topology" file=$file}" />
+            </a>
+        </li>
+    </ul>
+
+{/if}
+
+
+</div>
+
+{include file="footer.phtml"}

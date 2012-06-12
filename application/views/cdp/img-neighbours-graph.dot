@@ -1,7 +1,9 @@
 digraph G {
 
-    nodesep = 2;
-    ranksep = 2;
+    nodesep = 1;
+    ranksep = 1;
+    overlap = "compress";
+    splines = "splines";
 
     "{$deviceId}" [ shape="plaintext", label=<
         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
