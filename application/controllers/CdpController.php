@@ -104,6 +104,8 @@ class CdpController extends OSS_Controller_Action
         {
             do
             {
+                $this->view->splitLags = $splitLags = $this->_getParam( 'splitLags', false );
+
                 $this->view->ignoreList = $this->_getParam( 'ignoreList' );
                 $ignoreList =  array();
 
@@ -121,7 +123,38 @@ class CdpController extends OSS_Controller_Action
                 $root = new \OSS\SNMP( $host, $this->_options['community'] );
 
                 $devices = array();
-                $this->view->links = $root->useCisco_CDP()->linkTopology( $root->useCisco_CDP()->crawl( $devices, null, $ignoreList ) );
+                $root->useCisco_CDP()->crawl( $devices, null, $ignoreList );
+
+                // if we're not splitting LAGs, we need to sanitise the $links
+                if( !$splitLags )
+                {
+                    foreach( $devices as $parent => $neighbours )
+                    {
+                        foreach( $neighbours as $neighbour => $_links )
+                        {
+                            $_removed = array();
+                            foreach( $_links as $_idx => $linkDetails )
+                            {
+                                if( $linkDetails['isLAG'] )
+                                {
+                                    if( isset( $_removed[ $linkDetails['localLagPortId'] ] ) )
+                                        unset( $devices[ $parent ][ $neighbour ][ $_idx ] );
+                                    else
+                                    {
+                                        $_removed[ $linkDetails['localLagPortId'] ] = true;
+                                        $devices[ $parent ][ $neighbour ][ $_idx ]['localPortId']   = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortId'];
+                                        $devices[ $parent ][ $neighbour ][ $_idx ]['localPortName'] = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortName'];
+                                        $devices[ $parent ][ $neighbour ][ $_idx ]['localPort']     = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortName'];
+                                        $devices[ $parent ][ $neighbour ][ $_idx ]['remotePort']    = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortName'];
+                                    }
+                                }
+                            }
+                            unset( $_removed );
+                        }
+                    }
+                }
+
+                $this->view->links = $root->useCisco_CDP()->linkTopology( $devices );
                 $this->view->devices = $devices;
                 $this->view->locations = $this->extractLocation( $this->view->devices );
 
@@ -184,4 +217,142 @@ class CdpController extends OSS_Controller_Action
             echo "devices[] = \"{$name}\"\n";
     }
 
+
+
+    public function rstpTopologyAction()
+    {
+        $this->view->cdp_root = $host   = $this->_getParam( 'cdp_root', '' );
+        $this->view->vlanid   = $vlanid = $this->_getParam( 'vlanid', false );
+
+        if( strlen( $host ) )
+        {
+            $root = new \OSS\SNMP( $host, $this->_options['community'] );
+            $this->view->vlans = $root->useCisco_VTP()->vlanNames();
+        }
+
+        if( $this->getRequest()->isPost() )
+        {
+            do
+            {
+                $this->view->ignoreList = $this->_getParam( 'ignoreList' );
+                $ignoreList =  array();
+
+                foreach( explode( "\n", $this->_getParam( 'ignoreList' ) ) as $i )
+                    $ignoreList[] = trim( $i );
+
+                if( !strlen( $host ) )
+                {
+                    $this->addMessage( 'You must select a device as the root for CDP neighbour discovery and a VLAN', OSS_Message::ERROR );
+                    break;
+                }
+
+                if( !$vlanid )
+                    break;
+
+                $devices = array();
+                $root->useCisco_CDP()->crawl( $devices, null, $ignoreList );
+                //OSS_Debug::dd( $devices );
+
+                // we're splitting LAGs, we need to sanitise the $links
+                foreach( $devices as $parent => $neighbours )
+                {
+                    foreach( $neighbours as $neighbour => $_links )
+                    {
+                        $_removed = array();
+                        foreach( $_links as $_idx => $linkDetails )
+                        {
+                            if( $linkDetails['isLAG'] )
+                            {
+                                if( isset( $_removed[ $linkDetails['localLagPortId'] ] ) )
+                                    unset( $devices[ $parent ][ $neighbour ][ $_idx ] );
+                                else
+                                {
+                                    $_removed[ $linkDetails['localLagPortId'] ] = true;
+                                    $devices[ $parent ][ $neighbour ][ $_idx ]['localPortId']   = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortId'];
+                                    $devices[ $parent ][ $neighbour ][ $_idx ]['localPortName'] = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortName'];
+                                    $devices[ $parent ][ $neighbour ][ $_idx ]['localPort']     = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortName'];
+                                    $devices[ $parent ][ $neighbour ][ $_idx ]['remotePort']    = $devices[ $parent ][ $neighbour ][ $_idx ]['lagPortName'];
+                                }
+                            }
+                        }
+                        unset( $_removed );
+                    }
+                }
+
+                $links = $root->useCisco_CDP()->linkTopology( $devices );
+                //OSS_Debug::dd( $links );
+
+                // now, find the links which are participating in RSTP and their roles
+                //$snmpHosts = [ $cdp_root => $root ];
+                $portRoles = [];
+
+                foreach( $links as $aDevice => $neighbours )
+                {
+                    if( !isset( $portRoles[ $aDevice ] ) )
+                    {
+                        try
+                        {
+                            $_h = new \OSS\SNMP( $aDevice, $this->_options['community'] );
+                            $portRoles[ $aDevice ] = $_h->useCisco_RSTP()->rstpPortRole( $vlanid, true );
+                            unset( $_h );
+                        }
+                        catch( Exception $e )
+                        {
+                            $portRoles[ $aDevice ] = array();
+                        }
+                    }
+
+                    foreach( $neighbours as $bDevice => $ports )
+                    {
+                        if( !isset( $portRoles[ $bDevice ] ) )
+                        {
+                            try
+                            {
+                                $_h = new \OSS\SNMP( $bDevice, $this->_options['community'] );
+                                $portRoles[ $bDevice ] = $_h->useCisco_RSTP()->rstpPortRole( $vlanid, true );
+                                unset( $_h );
+                            }
+                            catch( Exception $e )
+                            {
+                                $portRoles[ $bDevice ] = array();
+                            }
+                        }
+
+                        foreach( $ports as $localPort => $remotePortDetails )
+                        {
+                            if( isset( $portRoles[ $aDevice ][ $remotePortDetails['localPortId'] ] ) )
+                            {
+                                $links[ $aDevice ][ $bDevice ][ $localPort ][ 'localRSTP' ]  = $portRoles[ $aDevice ][ $remotePortDetails['localPortId'] ];
+                                $links[ $aDevice ][ $bDevice ][ $localPort ][ 'remoteRSTP' ] = $portRoles[ $bDevice ][ $remotePortDetails['remotePortId'] ];
+                            }
+                            else
+                            {
+                                $links[ $aDevice ][ $bDevice ][ $localPort ][ 'localRSTP'  ] = false;
+                                $links[ $aDevice ][ $bDevice ][ $localPort ][ 'remoteRSTP' ] = false;
+                            }
+                        }
+                    }
+                }
+
+                OSS_Debug::dd( $links );
+
+                /*
+                $this->view->devices = $devices;
+                $this->view->locations = $this->extractLocation( $this->view->devices );
+
+                $this->view->file = $file = OSS_String::random( 16, true, true, true );
+                $file = 'img-cdp-topology-' . $file;
+
+                file_put_contents( APPLICATION_PATH . '/../var/tmp/' . $file . '.dot',
+                    $this->view->render( 'cdp/l2-topology-graph.dot' )
+                );
+                */
+            }while( false );
+        }
+        else
+        {
+            $this->view->ignoreList = implode( "\n", $this->_options['cdp']['l2topology']['ignore'] );
+        }
+
+    }
 }

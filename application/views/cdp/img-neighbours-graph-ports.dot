@@ -1,6 +1,13 @@
 
+{* we'll iterate over this devices connections to find the device's ports that we need to graph *}
 <TR>
-    {* we'll iterate over this devices connections to find the device's ports that we need to graph *}
+    {foreach $neighbours as $name => $connections}
+        {foreach $connections as $idx => $connection}
+            <TD>{if $connection.isLAG}{$connection.lagPortName}{/if}</TD>
+        {/foreach}
+    {/foreach}
+</TR>
+<TR>
     {foreach $neighbours as $name => $connections}
         {foreach $connections as $idx => $connection}
             {assign var="ports" value=$ports+1}

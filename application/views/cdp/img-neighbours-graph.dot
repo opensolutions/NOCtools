@@ -27,6 +27,11 @@ digraph G {
                         <TD PORT="{$connection.remotePort}">{$connection.remotePort}</TD>
                     {/foreach}
                 </TR>
+                <TR>
+                    {foreach $connections as $connection}
+                        <TD>{if $connection.isLAG}{$connection.lagPortName}{/if}</TD>
+                    {/foreach}
+                </TR>
                 <TR><TD COLSPAN="{$ports}">{$name}</TD></TR>
             </TABLE>
         >];

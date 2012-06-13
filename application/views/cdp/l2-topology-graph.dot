@@ -54,7 +54,7 @@ digraph G {
 {foreach $feConnectedSwitches as $feSwitch2 => $fePorts}
 {foreach $fePorts as $feLocalPort => $feRemotePortDetails}
     "{$feSwitch1}":"{$feLocalPort}" -> "{$feSwitch2}":"{$feRemotePortDetails.remotePort}" [
-            arrowhead = "none", arrowtail = "none"{if $feRemotePortDetails.isLAG}, color="blue"{/if} ];
+            arrowhead = "none", arrowtail = "none"{if $splitLags and $feRemotePortDetails.isLAG}, color="blue"{/if} ];
 {/foreach}
 {/foreach}
 {/foreach}

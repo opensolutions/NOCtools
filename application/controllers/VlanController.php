@@ -110,4 +110,29 @@ class VlanController extends OSS_Controller_Action
 
     }
 
+    public function ajaxGetForHostAction()
+    {
+        $host = $this->_getParam( 'host', null );
+
+        if( $host )
+        {
+            try
+            {
+                $device = new \OSS\SNMP( $host, $this->_options['community'] );
+                $vlans = $device->useCisco_VTP()->vlanNames();
+                unset( $device );
+            }
+            catch( \OSS\Exception $e )
+            {
+                return;
+            }
+
+            $this->getResponse()
+                ->setHeader('Content-Type', 'application/json')
+                ->setBody( Zend_Json::encode( $vlans ) )
+                ->sendResponse();
+            exit( 0 );
+        }
+    }
+
 }

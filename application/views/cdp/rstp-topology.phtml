@@ -1,0 +1,117 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<h1>NOCtools - Cisco Discovery Protocol Utilities - RSTP Topology &amp; Port Roles</h1>
+
+<br />
+
+{OSS_Message}
+
+<div class="row">
+
+    <div class="span12">
+        <p>
+            This utility will graph your RSTP L2 topology based on CDP neighbours for a given VLAN.
+        </p>
+        <p>
+            Start by entering the <em>root node</em> where CDP discovery will start, edit the
+            CDP hosts you want to ignore (will not appear on graph at all) and select the VLAN
+            you are interested in to generate the graph.
+        </p>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="span12 well">
+        <form action="{genUrl controller="cdp" action="rstp-topology"}" method="post">
+
+        <div class="span3">
+                <label>Root Node IP / Hostname:</label>
+                {if isset( $_devices ) and count( $_devices )}
+                    <select name="cdp_root" data-placeholder="Choose a device..." class="chzn-select span3" id="cdp_root">
+                    <option></option>
+                    {foreach $_devices as $d}
+                        <option value="{$d}" {if ( isset( $cdp_root ) and $cdp_root eq $d ) or ( !isset( $cdp_root ) and isset( $options.cdp.default_root ) and $options.cdp.default_root eq $d )}selected="selected"{/if}>{$d}</option>
+                    {/foreach}
+                    </select>
+                {else}
+                    <input type="text" class="span3" name="cdp_root"
+                        value="{if isset( $cdp_root )}{$cdp_root}{elseif isset( $options.cdp.default_root )}{$options.cdp.default_root}{/if}"
+                        placeholder="IP / Hostname..."
+                    />
+                {/if}
+                <br /><br />
+                <input type="submit" value="Generate &raquo;" class="btn" />
+        </div>
+
+        <div class="span5">
+                <label>List of CDP neighbour names to ignore - one per line:</label>
+                <textarea class="span5" name="ignoreList" rows="4">{$ignoreList}</textarea>
+        </div>
+
+        <div class="span3">
+            <label>RSTP VLAN:</label>
+
+            <select name="vlanid" id="vlanid" data-placeholder="Choose a VLAN..." class="chzn-select span3">
+                <option></option>
+                {if isset( $vlans ) and is_array( $vlans )}
+                    {foreach $vlans as $vid => $vname}
+                        <option value="{$vid}" {if isset( $vlanid ) and $vlanid eq $vid}selected="selected"{/if}>{$vid} - {$vname}</option>
+                    {/foreach}
+                {/if}
+            </select>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+
+{if isset( $file )}
+
+    <ul class="thumbnails">
+        <li class="span12">
+            <a href="{genUrl controller="cdp" action="img-l2-topology" file=$file}" target="_blank">
+                <img src="{genUrl controller="cdp" action="img-l2-topology" file=$file}" />
+            </a>
+        </li>
+    </ul>
+
+{/if}
+
+
+</div>
+
+<script>
+
+$().ready( function(){
+
+    $( "#cdp_root" ).on( 'change', function( event ) {
+        $( "#vlanid" ).attr( 'disabled', 'disabled' );
+
+        $( "#vlanid" ).html( '<option>Loading...</option>' ).val( "" );
+        $( "#vlanid" ).trigger( "liszt:updated" );
+
+        $.getJSON( "{genUrl controller='vlan' action='ajax-get-for-host'}/host/"
+                    + encodeURIComponent( $( "#cdp_root" ).val() ), function( j ){
+
+            var options = "<option></option>\n";
+
+            $.each( j, function(key, val) {
+                options += "<option value=\"" + key + "\">" + key + " - " + val + "</option>\n";
+            });
+
+            $( "#vlanid" ).html( options );
+            $( "#vlanid" ).trigger( "liszt:updated" );
+        });
+
+        $( "#vlanid" ).removeAttr( 'disabled' );
+    });
+});
+
+</script>
+
+
+{include file="footer.phtml"}

@@ -24,7 +24,7 @@
 <div class="row">
 
     <div class="span12 well">
-        <form action="{genUrl controller="cdp" action="l2-topology"}" method="post">
+        <form action="{genUrl controller="cdp" action="l2-topology"}" method="post" class="form form-horizontal">
 
         <div class="span3">
                 <label>Root Node IP / Hostname:</label>
@@ -41,6 +41,10 @@
                     />
                 {/if}
                 <br /><br />
+                <label for="splitLags" class="checkbox">
+                    <input type="checkbox" name="splitLags" id="splitLags" value="1" {if isset( $splitLags ) and $splitLags}checked="checked"{/if} />
+                    Split LAGs into individual links
+                </label><br />
                 <input type="submit" value="Generate &raquo;" class="btn" />
         </div>
 
