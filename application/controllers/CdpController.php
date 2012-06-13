@@ -73,9 +73,9 @@ class CdpController extends OSS_Controller_Action
 
     public function imgNeighboursGraphAction()
     {
-        $this->view->cdp_root = $host = $this->_getParam( 'cdp_root', '' );
+        $this->view->cdp_root = $cdp_root = $this->_getParam( 'cdp_root', '' );
 
-        if( !strlen( $host ) )
+        if( !strlen( $cdp_root ) )
         {
             header( 'content-type: text/plain' );
             echo 'You must provide a hostname or IP address for CDP neighbour discovery';
@@ -84,8 +84,9 @@ class CdpController extends OSS_Controller_Action
 
         try
         {
-            $host = new \OSS\SNMP( $host, $this->_options['community'] );
+            $host = new \OSS\SNMP( $cdp_root, $this->_options['community'] );
             $this->view->host = $host;
+            $this->view->deviceId = $host->useCisco_CDP()->id();
             $this->view->neighbours = $host->useCisco_CDP()->neighbours();
         }
         catch( \OSS\Exception $e )
@@ -94,7 +95,6 @@ class CdpController extends OSS_Controller_Action
             $this->_forward( 'index' );
         }
 
-        $this->view->deviceId = $host->useCisco_CDP()->id();
         header( 'content-type: image/png' );
 
         $file = 'img-neighbour-graph-' . OSS_String::random( 16, true, true, true );

@@ -9,7 +9,7 @@ digraph G {
         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
             {assign var="ports" value=0}
             {include assign="portGraph" file="./img-neighbours-graph-ports.dot" scope=parent}
-            <TR><TD COLSPAN="{$ports}">{$name}</TD></TR>
+            <TR><TD COLSPAN="{$ports}">{$deviceId}</TD></TR>
             {$portGraph}
         </TABLE>
     >];

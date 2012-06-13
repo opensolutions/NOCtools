@@ -1,0 +1,166 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<h1>NOCtools - Spanning Tree Utilities - RSTP VLAN Port Roles</h1>
+
+<br />
+
+{OSS_Message}
+
+<div class="row">
+
+    <form action="{genUrl controller="stp" action="rstp-port-roles"}" method="post">
+
+    <div class="span3">
+        <p>
+            This tool will allow you to see the port RSTP roles per VLAN
+            for a given switch.
+        </p>
+        <p>
+            {if isset( $_devices ) and count( $_devices )}
+                <select name="rstpPortRolesDevice" data-placeholder="Choose a device..." class="chzn-select span3">
+                    <option></option>
+                    {foreach $_devices as $d}
+                        <option value="{$d}" {if isset( $rstpPortRolesDevice ) and $rstpPortRolesDevice eq $d}selected="selected"{/if}>{$d}</option>
+                    {/foreach}
+                </select>
+                <br /><br />
+                <input type="submit" value="Submit &raquo;" class="btn" />
+            {else}
+                <span class="label label-important">ERROR</span> No devices defined in:<br /><br />
+                <code>application/configs/devices.ini</code>
+            {/if}
+        </p>
+    </div>
+
+    <div class="span3">
+        {if isset( $vlans )}
+            <p>
+                Select a VLAN below if you wish to limit the results to a single VLAN.
+            </p>
+            <p>
+                <select name="limitToVlan" data-placeholder="Optionally choose a VLAN..." class="chzn-select-deselect span3">
+                    <option></option>
+                    {foreach $vlans as $vid => $vname}
+                        <option value="{$vid}" {if isset( $limitToVlan ) and $limitToVlan neq false and $vid eq $limitToVlan}selected="selected"{/if}>{$vid} - {$vname}</option>
+                    {/foreach}
+                </select>
+            </p>
+        {/if}
+    </div>
+
+    <div class="span3">
+    </div>
+
+    <div class="span3">
+    </div>
+
+    </form>
+
+
+</div>
+
+{if isset( $vlans )}
+
+<br />
+
+{if isset( $limitToVlan ) and $limitToVlan}
+    <h4>Port RSTP Roles for VLAN {$vlans.$limitToVlan} ({$limitToVlan}) on {$rstpPortRolesDevice}</h4>
+
+    <div class="row">
+        <div class="span3">&nbsp;</div>
+        <div class="span6">
+            <br />
+            <table class="table span6">
+            <thead>
+                <tr>
+                    <th>Port</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+            {foreach $portsInRSTP as $portId}
+                <tr>
+                    <td>
+                        {$ports.$portId}
+                    </td>
+                    <td>
+                        {if isset( $roles.$vid.$portId )}
+                            <label class="label
+                                {if $roles.$vid.$portId eq 'root'}
+                                    label-success
+                                {elseif $roles.$vid.$portId eq 'designated'}
+                                    label-success
+                                {elseif $roles.$vid.$portId eq 'alternate'}
+                                    label-important
+                                {elseif $roles.$vid.$portId eq 'backup'}
+                                    label-error
+                                {else}
+                                    label-info
+                                {/if}" style="text-align: center">{$roles.$vid.$portId|capitalize}</label>
+                        {/if}
+                    </td>
+                </tr>
+            {/foreach}
+            </tbody>
+            </table>
+        </div>
+        <div class="span3">&nbsp;</div>
+    </div>
+
+{else}
+    <h4>Port RSTP Roles for All VLANs on {$rstpPortRolesDevice}</h4>
+
+    <p>
+        Note that blank cells mean that that port is not participating in RSTP for the given VLAN / is not a member of the given VLAN.
+    </p>
+
+    <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            {foreach $portsInRSTP as $portId}
+                <th style="text-align: center">{$ports.$portId}</th>
+            {/foreach}
+        </tr>
+    </thead>
+    <tbody>
+    {foreach $vlans as $vid => $vname}
+        <tr>
+            <td>{$vid}</td>
+            <td>{$vname}</td>
+            {foreach $portsInRSTP as $portId}
+                <td>
+                    {if isset( $roles.$vid.$portId )}
+                        <label class="label
+                            {if $roles.$vid.$portId eq 'root'}
+                                label-success
+                            {elseif $roles.$vid.$portId eq 'designated'}
+                                label-success
+                            {elseif $roles.$vid.$portId eq 'alternate'}
+                                label-important
+                            {elseif $roles.$vid.$portId eq 'backup'}
+                                label-error
+                            {else}
+                                label-info
+                            {/if}" style="text-align: center">{$roles.$vid.$portId|capitalize}</label>
+                    {/if}
+                </td>
+            {/foreach}
+        </tr>
+    {/foreach}
+    </tbody>
+    </table>
+{/if}
+
+
+<br /><br /><br />
+
+
+{/if} {* if isset( $vlans ) *}
+
+</div>
+
+{include file="footer.phtml"}
