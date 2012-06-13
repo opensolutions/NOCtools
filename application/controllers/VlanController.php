@@ -55,7 +55,7 @@ class VlanController extends OSS_Controller_Action
         {
             // get details for source
             $devices_vlans = array();
-            $source = $this->_getParam( 'source' );
+            $this->view->source = $source = $this->_getParam( 'source' );
             try
             {
                 $host = new \OSS\SNMP( $source, $this->_options['community'] );
@@ -68,12 +68,15 @@ class VlanController extends OSS_Controller_Action
                 return;
             }
 
-            $odevices = $this->_getParam( 'odevices', false );
+            $this->view->odevices = $odevices = $this->_getParam( 'odevices', false );
 
             if( is_array( $odevices ) && count( $odevices ) )
             {
                 foreach( $odevices as $dev )
                 {
+                    if( $dev == $source )
+                        continue;
+
                     try
                     {
                         $host = new \OSS\SNMP( $dev, $this->_options['community'] );

@@ -13,7 +13,8 @@
     <div class="span12">
         <p>
             This tool will allow you to see what VLANs are available on a switch
-            and perform a side by side comparison with other switch(es).
+            and perform a side by side comparison with other switch(es).<br />
+            Additionally name mismatches will be highlighted when / if they occur.
         </p>
     </div>
 </div>
@@ -45,7 +46,9 @@
                 <label>List of optional device(s) to compare with:</label>
                     <select data-placeholder="Choose optional device(s)..." class="chzn-select span3" multiple="multiple" name="odevices[]">
                     {foreach $_devices as $d}
-                        <option value="{$d}">{$d}</option>
+                        <option value="{$d}"
+                                {if isset( $odevices ) and is_array( $odevices ) and in_array( $d, $odevices )}selected="selected"{/if}
+                            >{$d}</option>
                     {/foreach}
                 </select>
         </div>
@@ -54,7 +57,59 @@
     </div>
 </div>
 
+{if isset( $allVlans )}
 
+{if count( $devices_vlans ) gt 1}
+    <h4>
+        Comparison of
+        {foreach $devices_vlans as $device => $vlans}
+            {$device}{if not $vlans@last}, {/if}
+        {/foreach}
+        (in order):
+    </h4>
+{/if}
+
+<table class="table">
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        {if count( $devices_vlans ) gt 1}
+            {foreach $devices_vlans as $device => $vlans}
+                <th>{substr( $device, 0, strpos( $device, '.' ) )}</th>
+            {/foreach}
+        {else}
+            <th>{$source}</th>
+        {/if}
+    </tr>
+</thead>
+<tbody>
+{foreach $allVlans as $vid => $vname}
+    <tr>
+        <td>{$vid}</td>
+        <td>{$vname}</td>
+        {foreach $devices_vlans as $device => $vlans}
+            <td>
+                {if isset( $vlans.$vid )}
+                    {if isset( $nameMismatch.$device.$vid ) and $nameMismatch.$device.$vid}
+                        <span class="label label-warning"><i class="icon-warning-sign icon-white"></i>&nbsp;{$vlans.$vid}</span>
+                    {else}
+                        <span class="badge badge-success"><i class="icon-ok icon-white"></i></span>
+                    {/if}
+                {else}
+                    <span class="badge badge-important"><i class="icon-remove icon-white"></i></span>
+                {/if}
+            </td>
+        {/foreach}
+{/foreach}
+</tbody>
+</table>
+
+
+<br /><br /><br />
+
+
+{/if} {* if isset( $allVlans ) *}
 
 </div>
 
