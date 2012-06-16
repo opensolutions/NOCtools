@@ -62,19 +62,45 @@
                     {/foreach}
                 {/if}
             </select>
+            <br /><br />
+            <label for="excludeNonParticipants" class="checkbox">
+                <input type="checkbox" name="excludeNonParticipants" id="excludeNonParticipants" value="1" {if isset( $excludeNonParticipants ) and $excludeNonParticipants}checked="checked"{/if} />
+                Exclude non-participating nodes
+            </label>
+            <label for="showPortRoles" class="checkbox">
+                <input type="checkbox" name="showPortRoles" id="showPortRoles" value="1" {if isset( $showPortRoles ) and $showPortRoles}checked="checked"{/if} />
+                Show RSTP Port Roles
+            </label><br />
+
         </div>
 
         </form>
     </div>
 </div>
 
+{if isset( $showPortRoles ) and $showPortRoles}
+    <div class="row">
+        <div class="span3">&nbsp;</div>
+        <div class="span6">
+            <strong>Port Roles:</strong>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="label" style="background-color: #6495ED;">ROOT</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="label" style="background-color: #00ff00;">DESIGNATED</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="label" style="background-color: red;">ALTERNATE</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="label" style="background-color: orange;">BACKUP</span>
+        </div>
+    </div>
+{/if}
 
 {if isset( $file )}
 
     <ul class="thumbnails">
         <li class="span12">
-            <a href="{genUrl controller="cdp" action="img-l2-topology" file=$file}" target="_blank">
-                <img src="{genUrl controller="cdp" action="img-l2-topology" file=$file}" />
+            <a href="{genUrl controller="cdp" action="img-rstp-topology" file=$file}" target="_blank">
+                <img src="{genUrl controller="cdp" action="img-rstp-topology" file=$file}" />
             </a>
         </li>
     </ul>

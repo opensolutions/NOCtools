@@ -1,0 +1,34 @@
+
+<TR>
+    {* we'll iterate over this switches neighbours to find the switch's ports that we need to graph *}
+    {foreach $devices.$feSwitch as $feNeighbour => $feConnections}
+        {foreach $feConnections as $portDetails}
+            {assign var="ports" value=$ports+1}
+            <TD PORT="{$portDetails.localPort}"
+                {if isset( $portDetails.localRSTP )}
+                    {if isset( $showPortRoles ) and $showPortRoles}
+                        {if $portDetails.localRSTP eq 'root'}
+                            BGCOLOR="cornflowerblue"
+                        {elseif $portDetails.localRSTP eq 'designated'}
+                            BGCOLOR="green"
+                        {elseif $portDetails.localRSTP eq 'alternate'}
+                            BGCOLOR="red"
+                        {elseif $portDetails.localRSTP eq 'backup'}
+                            BGCOLOR="orange"
+                        {/if}
+                    {else}
+                        {if $portDetails.localRSTP eq 'root'}
+                            BGCOLOR="green"
+                        {elseif $portDetails.localRSTP eq 'designated'}
+                            BGCOLOR="green"
+                        {elseif $portDetails.localRSTP eq 'alternate'}
+                            BGCOLOR="red"
+                        {elseif $portDetails.localRSTP eq 'backup'}
+                            BGCOLOR="red"
+                        {/if}
+                    {/if}
+                {/if}
+            >{$portDetails.localPortName}</TD>
+        {/foreach}
+    {/foreach}
+</TR>

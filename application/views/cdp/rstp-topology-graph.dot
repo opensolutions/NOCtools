@@ -1,0 +1,86 @@
+
+digraph G {
+
+    nodesep = 2;
+    ranksep = 2;
+    {* overlap = false; *}
+    splines="spline"
+
+
+    {*
+        Define devices in the appropriate locations in GraphViz
+        To try and make the connections 'better', we alternate ports above and below the device name via $cnt
+    *}
+
+{assign var="cnt" value=0}
+{foreach $locations as $feLocation => $feSwitches}
+
+    {* define subgraph / cluster display parameters *}
+
+    subgraph "cluster_{$feLocation}" {
+        style=filled;
+        color=lightgrey;
+        node [style=filled,fillcolor=white];
+        label = "{$feLocation|upper}";
+
+        {* now add the switches in this location to this location *}
+        {foreach $feSwitches as $feSwitch}
+
+            {if $excludeNonParticipants}
+                {assign var="skipSwitch" value=1}
+
+                {foreach $devices.$feSwitch as $neighbours => $ports}
+                    {foreach $ports as $portDetails}
+                        {if $portDetails.localRSTP neq false}
+                            {assign var="skipSwitch" value=0}
+                        {/if}
+                    {/foreach}
+                {/foreach}
+            {else}
+                {assign var="skipSwitch" value=0}
+            {/if}
+
+            {if not $skipSwitch}
+                {assign var="ports" value=0}
+                {include assign="portGraph" file="./rstp-topology-graph-ports.dot" scope=parent}
+
+                "{$feSwitch}" [ shape="plaintext", rank="{if substr( $feSwitch, 0, 2 ) eq 'cr'}2{elseif substr( $feSwitch, 0, 2 ) eq 'cd'}3{else}1{/if}", label=<
+
+                    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+
+                        {if $cnt % 2 eq 0}
+                            <TR><TD COLSPAN="{$ports}">{$feSwitch}</TD></TR>
+                            {$portGraph}
+                        {else}
+                            {$portGraph}
+                            <TR><TD COLSPAN="{$ports}">{$feSwitch}</TD></TR>
+                        {/if}
+
+                    </TABLE>
+
+                >];
+                {assign var="cnt" value=$cnt+1}
+            {/if}
+        {/foreach}
+    }
+{/foreach}
+
+
+// now, add the interswitch connections
+//
+
+{foreach $links as $feSwitch1 => $feConnectedSwitches}
+{foreach $feConnectedSwitches as $feSwitch2 => $fePorts}
+{foreach $fePorts as $feLocalPort => $fePortDetails}
+    {if not $excludeNonParticipants or not isset( $fePortDetails.localRSTP ) or $fePortDetails.localRSTP neq false}
+
+        "{$feSwitch1}":"{$feLocalPort}" -> "{$feSwitch2}":"{$fePortDetails.remotePort}" [
+                arrowhead = "none", arrowtail = "none"{if $fePortDetails.RSTPpassing === true},color = "chartreuse4"{elseif $fePortDetails.RSTPpassing === false},color = "red"{/if} ];
+
+    {/if}
+{/foreach}
+{/foreach}
+{/foreach}
+
+}
+
