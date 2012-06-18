@@ -85,17 +85,9 @@ class CdpController extends OSS_Controller_Action
             $this->_forward( 'index' );
         }
 
+        $file = $this->generateGraphFilename( array( $cdp_root ) );
         header( 'content-type: image/png' );
-
-        $file = 'img-neighbour-graph-' . OSS_String::random( 16, true, true, true );
-
-        file_put_contents( APPLICATION_PATH . '/../var/tmp/' . $file . '.dot', $this->view->render( 'cdp/img-neighbours-graph.dot' ) );
-
-        system( '/usr/bin/dot -T png -o ' . APPLICATION_PATH . '/../var/tmp/'
-                    . $file . '.png ' . APPLICATION_PATH . '/../var/tmp/' . $file . '.dot' );
-
-        header( 'content-type: image/png' );
-        readfile( APPLICATION_PATH . '/../var/tmp/' . $file . '.png' );
+        readfile( $this->generateDotGraph( $file, $this->view->render( 'cdp/img-neighbours-graph.dot' ) ) );
     }
 
     public function l2TopologyAction()
@@ -133,12 +125,9 @@ class CdpController extends OSS_Controller_Action
                 $this->view->devices = $devices;
                 $this->view->locations = $this->extractLocation( $this->view->devices );
 
-                $this->view->file = $file = OSS_String::random( 16, true, true, true );
-                $file = 'img-cdp-topology-' . $file;
-
-                file_put_contents( APPLICATION_PATH . '/../var/tmp/' . $file . '.dot',
-                    $this->view->render( 'cdp/l2-topology-graph.dot' )
-                );
+                $this->view->file = $file = $this->generateGraphFilename( array( $host ) );
+                $this->getSessionNamespace()->l2_topology_file
+                    = $this->generateDotGraph( $file, $this->view->render( 'cdp/l2-topology-graph.dot' ), APPLICATION_PATH . '/../var/tmp' );
 
             }while( false );
         }
@@ -151,18 +140,10 @@ class CdpController extends OSS_Controller_Action
 
     public function imgL2TopologyAction()
     {
-        $file = $this->_getParam( 'file', false );
-
-        if( $file && file_exists( APPLICATION_PATH . '/../var/tmp/img-cdp-topology-' . $file . '.dot' ) )
+        if( isset( $this->getSessionNamespace()->l2_topology_file ) )
         {
-            $file = 'img-cdp-topology-' . $file;
-
-            if( !file_exists( APPLICATION_PATH . '/../var/tmp/' . $file . '.png' ) )
-                system( '/usr/bin/dot -T png -o ' . APPLICATION_PATH . '/../var/tmp/'
-                        . $file . '.png ' . APPLICATION_PATH . '/../var/tmp/' . $file . '.dot' );
-
             header( 'content-type: image/png' );
-            readfile( APPLICATION_PATH . '/../var/tmp/' . $file . '.png' );
+            readfile( $this->getSessionNamespace()->l2_topology_file );
         }
     }
 
@@ -289,12 +270,10 @@ class CdpController extends OSS_Controller_Action
                 $this->view->links   = $links;
                 $this->view->locations = $this->extractLocation( $devices );
 
-                $this->view->file = $file = OSS_String::random( 16, true, true, true );
-                $file = 'img-rstp-topology-' . $file;
 
-                file_put_contents( APPLICATION_PATH . '/../var/tmp/' . $file . '.dot',
-                    $this->view->render( 'cdp/rstp-topology-graph.dot' )
-                );
+                $this->view->file = $file = $this->generateGraphFilename( array( $host, $vlanid ) );
+                $this->getSessionNamespace()->rstp_topology_file
+                    = $this->generateDotGraph( $file, $this->view->render( 'cdp/rstp-topology-graph.dot' ), APPLICATION_PATH . '/../var/tmp' );
 
             }while( false );
         }
@@ -323,18 +302,10 @@ class CdpController extends OSS_Controller_Action
 
     public function imgRstpTopologyAction()
     {
-        $file = $this->_getParam( 'file', false );
-
-        if( $file && file_exists( APPLICATION_PATH . '/../var/tmp/img-rstp-topology-' . $file . '.dot' ) )
+        if( isset( $this->getSessionNamespace()->rstp_topology_file ) )
         {
-            $file = 'img-rstp-topology-' . $file;
-
-            if( !file_exists( APPLICATION_PATH . '/../var/tmp/' . $file . '.png' ) )
-                system( '/usr/bin/dot -T png -o ' . APPLICATION_PATH . '/../var/tmp/'
-                        . $file . '.png ' . APPLICATION_PATH . '/../var/tmp/' . $file . '.dot' );
-
             header( 'content-type: image/png' );
-            readfile( APPLICATION_PATH . '/../var/tmp/' . $file . '.png' );
+            readfile( $this->getSessionNamespace()->rstp_topology_file );
         }
     }
 

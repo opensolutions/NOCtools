@@ -144,8 +144,8 @@ class OSS_Controller_Action extends Zend_Controller_Action
         // call the parent's version where all the Zend magic happens
         parent::__construct( $request, $response, $invokeArgs );
 
-        $this->view->controller = $this->_controller = $this->getRequest()->getParam( 'controller' );
-        $this->view->action     = $this->_action     = $this->getRequest()->getParam( 'action'     );
+        $this->view->controller = $this->_controller = $this->getRequest()->getControllerName();
+        $this->view->action     = $this->_action     = $this->getRequest()->getActionName();
 
         $this->view->doctype( 'HTML5' );
         $this->view->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
@@ -293,6 +293,10 @@ class OSS_Controller_Action extends Zend_Controller_Action
             $this->view->session = $this->_session;
         }
 
+        // add a random ID for this user
+        if( !isset( $this->_session->userRndId ) )
+            $this->_session->userRndId = OSS_String::random();
+
         return $this->_session;
     }
 
@@ -331,6 +335,63 @@ class OSS_Controller_Action extends Zend_Controller_Action
     {
         if( $this->_getParam( 'cli-verbose', false ) )
             echo '[' . date( 'Y-m-d H:i:s' ) . "] {$msg}\n";
+    }
+
+
+    /**
+     * Create a file name for a graph via controller / action and some other parameters.
+     *
+     */
+    protected function generateGraphFilename( $params )
+    {
+        $n = 'dotimg-' . $this->_controller . '-' . $this->_action;
+
+        if( isset( $this->_session->userRndId ) )
+            $n .= '-' . $this->_session->userRndId;
+
+        foreach( $params as $p )
+            $n .= '-' . $p;
+
+        return $n;
+    }
+
+    protected function generateDotGraph( $file, $dot, $tmp = null )
+    {
+        if( $tmp === null )
+            $tmp = APPLICATION_PATH . '/../var/tmp';
+
+        // auto clean up
+        $this->autoCleanGraphFiles( $tmp, 'dotimg-' );
+
+        $dotFile = "{$tmp}/{$file}.dot";
+        $pngFile = "{$tmp}/{$file}.png";
+
+        if( is_readable( $dotFile ) && file_get_contents( $dotFile ) == $dot )
+            return $pngFile;
+
+        file_put_contents( $dotFile, $dot );
+
+        system( escapeshellcmd( "{$this->_options['cmd']['dot']} -T png -o {$pngFile} {$dotFile}" ) );
+
+        return $pngFile;
+    }
+
+
+    protected function autoCleanGraphFiles( $tmp, $prefix )
+    {
+        $files = scandir( $tmp );
+
+        if( $files && count( $files ) )
+        {
+            foreach( $files as $file )
+            {
+                if( is_file( "{$tmp}/{$file}" ) && is_writable( "{$tmp}/{$file}" ) && substr( $file, 0, strlen( $prefix ) ) == $prefix )
+                {
+                    if( time() - @stat( "{$tmp}/{$file}" )['atime'] > 60 * 60 * 24 )
+                        @unlink( "{$tmp}/{$file}" );
+                }
+            }
+        }
     }
 
 }
