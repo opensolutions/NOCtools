@@ -213,10 +213,10 @@ class CdpController extends OSS_Controller_Action
         {
             do
             {
-                if( $this->_getParam( 'excludeNonParticipants', null ) === null )
+                if( $vlanid && $this->_getParam( 'excludeNonParticipants', null ) === null )
                     $this->view->excludeNonParticipants = $excludeNonParticipants = false;
 
-                if( $this->_getParam( 'showPortRoles', null ) === null )
+                if( $vlanid && $this->_getParam( 'showPortRoles', null ) === null )
                     $this->view->showPortRoles = $showPortRoles = false;
 
                 $this->view->ignoreList = ( isset( $this->view->ignoreList ) ? $this->view->ignoreList : $this->_getParam( 'ignoreList' ) );

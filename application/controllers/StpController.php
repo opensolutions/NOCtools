@@ -89,8 +89,7 @@ class StpController extends OSS_Controller_Action
             $this->view->ports       = $host->useIface()->names();
             $this->view->vlans       = $vlans;
             $this->view->roles       = $roles;
-            $this->view->unknowns    = unknowns;
-
+            $this->view->unknowns    = $unknowns;
             unset( $host );
         }
 

@@ -78,24 +78,24 @@
     </div>
 </div>
 
-{if isset( $showPortRoles ) and $showPortRoles}
-    <div class="row">
-        <div class="span3">&nbsp;</div>
-        <div class="span6">
-            <strong>Port Roles:</strong>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="label" style="background-color: #6495ED;">ROOT</span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="label" style="background-color: #00ff00;">DESIGNATED</span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="label" style="background-color: red;">ALTERNATE</span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="label" style="background-color: orange;">BACKUP</span>
-        </div>
-    </div>
-{/if}
-
 {if isset( $file )}
+
+    {if isset( $showPortRoles ) and $showPortRoles}
+        <div class="row">
+            <div class="span3">&nbsp;</div>
+            <div class="span6">
+                <strong>Port Roles:</strong>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="label" style="background-color: #6495ED;">ROOT</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="label" style="background-color: #00ff00;">DESIGNATED</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="label" style="background-color: red;">ALTERNATE</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="label" style="background-color: orange;">BACKUP</span>
+            </div>
+        </div>
+    {/if}
 
     <ul class="thumbnails">
         <li class="span12">
