@@ -1,0 +1,16 @@
+
+;; NOCtools template configuration file
+
+
+;; An array of devices to query by SNMP to populate drop
+;; down menus in NOCtools.
+;;
+;; Auto-generation may be possible via  bin/noctool.php -a cdp.cli-generate-device-ini
+
+devices[] = "sw01.example.com"
+devices[] = "sw02.example.com"
+devices[] = "sw03.example.com"
+devices[] = "sw04.example.com"
+devices[] = "rtr01.example.com"
+devices[] = "rtr01.example.com"
+

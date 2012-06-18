@@ -1,0 +1,107 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Template configuration file for NOCtools
+
+[user]
+
+;; The default SNMP 2c community string to use - it is assumed all devices have the same community
+community = 'XXX'
+
+
+;; For the CdpController, the following is the hostname / IP address of
+;; the device to use to begin CDP queries
+;;
+;; It should match a device in the devices.ini file
+cdp.default_root = 'root.device.net'
+
+
+;; When discovering devices via CDP, you may discover devices that
+;; are customer / third party devices that you cannot query by SNMP.
+;;
+;; You can list these in an array here by their CDP neighbour ID and they will be ignored
+;
+;cdp.l2topology.ignore[] = 'switch1.custa.example.com'
+;cdp.l2topology.ignore[] = 'router2.custb.example.com'
+
+
+
+options.support.email.address = 'support@example.com'
+
+;; Path to your GraphViz executable
+cmd.dot = "/usr/bin/dot"
+
+
+;; The class to use for custom utilites. You should extend this / create your own
+utilsClass = 'OSS_NOCtools_Utils'
+
+
+[production : user]
+
+; Use minified CSS / JS
+mini_js = 0
+mini_css = 0
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bootstrap Options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+phpSettings.display_startup_errors = 0
+phpSettings.display_errors = 0
+
+includePaths.library = APPLICATION_PATH "/../library"
+
+pluginPaths.OSS_Resource = APPLICATION_PATH "/../library/OSS/Resource"
+
+bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
+bootstrap.class = "Bootstrap"
+
+; path to the temporary directory
+tmpdir = APPLICATION_PATH "/../var/tmp"
+temporary_directory = APPLICATION_PATH "/../var/tmp"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Resources
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+
+resources.logger.enabled = 1
+resources.logger.writers.stream.level = 7
+resources.logger.writers.stream.path = APPLICATION_PATH "/../var/log"
+resources.logger.writers.stream.owner = www-data
+resources.logger.writers.stream.group = www-data
+
+resources.namespace.checkip = 0
+resources.session.save_path = APPLICATION_PATH "/../var/session"
+resources.session.use_only_cookies = true
+resources.session.remember_me_seconds = 900
+
+resources.mailer.smtphost = "mail.example.com"
+;resources.mailer.username = "user"
+;resources.mailer.password = 'pass'
+;resources.mailer.ssl = 'ssl'
+;resources.mailer.port = 465
+;resources.mailer.auth = plain
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Smarty View
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+resources.smarty.enabled   = 1
+resources.smarty.templates = APPLICATION_PATH "/views"
+resources.smarty.compiled  = APPLICATION_PATH "/../var/templates_c"
+resources.smarty.cache     = APPLICATION_PATH "/../var/cache"
+resources.smarty.plugins[] = APPLICATION_PATH "/../library/OSS/Smarty/functions"
+resources.smarty.plugins[] = APPLICATION_PATH "/../library/Smarty/plugins"
+resources.smarty.plugins[] = APPLICATION_PATH "/../library/Smarty/sysplugins"
+resources.smarty.debugging = 0
+
+
+[development : production]
+
+phpSettings.display_startup_errors = 1
+phpSettings.display_errors = 1
+
