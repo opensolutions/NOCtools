@@ -3,7 +3,7 @@ Welcome to NOCtools
 
 A mixed bag collection of tools and utilities for NOC engineers.
 
-Developed by [Open Solutions](http://wwwopensolutions.ie/), Dublin, Ireland - *Internet infrasructure specialists*.
+Developed by [Open Solutions](http://www.opensolutions.ie/), Dublin, Ireland - *Internet infrasructure specialists*.
 
 Overview
 -----------
@@ -43,6 +43,6 @@ by the Free Software Foundation, either version 3 of the License, or (at your op
 Contact
 --------
 
-**NOCtools** is development and maintained by [Open Solutions](http://wwwopensolutions.ie/). Our contact
+**NOCtools** is development and maintained by [Open Solutions](http://www.opensolutions.ie/). Our contact
 details can be found at: http://www.opensolutions.ie/about-us
 
