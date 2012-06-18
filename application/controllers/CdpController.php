@@ -123,7 +123,7 @@ class CdpController extends OSS_Controller_Action
 
                 $this->view->links = $root->useCisco_CDP()->linkTopology( $devices );
                 $this->view->devices = $devices;
-                $this->view->locations = $this->extractLocation( $this->view->devices );
+                $this->view->locations = call_user_func( "{$this->_options['utilsClass']}::extractLocations", $devices );
 
                 $this->view->file = $file = $this->generateGraphFilename( array( $host ) );
                 $this->getSessionNamespace()->l2_topology_file
@@ -145,21 +145,6 @@ class CdpController extends OSS_Controller_Action
             header( 'content-type: image/png' );
             readfile( $this->getSessionNamespace()->l2_topology_file );
         }
-    }
-
-    public function extractLocation( $devs )
-    {
-        $locations = array();
-        foreach( $devs as $swname => $info )
-        {
-            $loc = substr( $swname, strpos( $swname, '.' ) + 1, strpos( $swname, '.', strpos( $swname, '.' ) + 1 ) - strpos( $swname, '.' ) - 1 );
-            if( !isset( $locations[ $loc ] ) )
-                $locations[ $loc ] = array();
-
-            $locations[ $loc ][] = $swname;
-        }
-
-        return $locations;
     }
 
     public function cliGenerateDeviceIniAction()
@@ -268,7 +253,7 @@ class CdpController extends OSS_Controller_Action
 
                 $this->view->devices = $devices;
                 $this->view->links   = $links;
-                $this->view->locations = $this->extractLocation( $devices );
+                $this->view->locations = call_user_func( "{$this->_options['utilsClass']}::extractLocations", $devices );
 
 
                 $this->view->file = $file = $this->generateGraphFilename( array( $host, $vlanid ) );
