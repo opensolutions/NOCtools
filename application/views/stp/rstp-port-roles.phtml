@@ -87,18 +87,16 @@
                     </td>
                     <td>
                         {if isset( $roles.$vid.$portId )}
-                            <label class="label
+                            <label class="label" style="text-align: center;
                                 {if $roles.$vid.$portId eq 'root'}
-                                    label-success
+                                    background-color: #6495ED;
                                 {elseif $roles.$vid.$portId eq 'designated'}
-                                    label-success
+                                    background-color: #00aa00;
                                 {elseif $roles.$vid.$portId eq 'alternate'}
-                                    label-important
+                                    background-color: red;
                                 {elseif $roles.$vid.$portId eq 'backup'}
-                                    label-error
-                                {else}
-                                    label-info
-                                {/if}" style="text-align: center">{$roles.$vid.$portId|capitalize}</label>
+                                    background-color: orange;
+                                {/if}">{$roles.$vid.$portId|capitalize}</label>
                         {/if}
                     </td>
                 </tr>
