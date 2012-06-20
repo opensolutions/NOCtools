@@ -19,7 +19,7 @@
         </p>
         <p>
             {if isset( $_devices ) and count( $_devices )}
-                <select name="rstpPortRolesDevice" data-placeholder="Choose a device..." class="chzn-select span3">
+                <select id="rstpPortRolesDevice" name="rstpPortRolesDevice" data-placeholder="Choose a device..." class="chzn-select span3">
                     <option></option>
                     {foreach $_devices as $d}
                         <option value="{$d}" {if isset( $rstpPortRolesDevice ) and $rstpPortRolesDevice eq $d}selected="selected"{/if}>{$d}</option>
@@ -40,7 +40,7 @@
                 Select a VLAN below if you wish to limit the results to a single VLAN.
             </p>
             <p>
-                <select name="limitToVlan" data-placeholder="Optionally choose a VLAN..." class="chzn-select-deselect span3">
+                <select id="limitToVlan" name="limitToVlan" data-placeholder="Optionally choose a VLAN..." class="chzn-select-deselect span3">
                     <option></option>
                     {foreach $vlans as $vid => $vname}
                         <option value="{$vid}" {if isset( $limitToVlan ) and $limitToVlan neq false and $vid eq $limitToVlan}selected="selected"{/if}>{$vid} - {$vname}</option>
@@ -160,5 +160,34 @@
 {/if} {* if isset( $vlans ) *}
 
 </div>
+
+<script>
+
+$().ready( function(){
+
+    $( "#rstpPortRolesDevice" ).on( 'change', function( event ) {
+        $( "#limitToVlan" ).attr( 'disabled', 'disabled' );
+
+        $( "#limitToVlan" ).html( '<option>Loading...</option>' ).val( "" );
+        $( "#limitToVlan" ).trigger( "liszt:updated" );
+
+        $.getJSON( "{genUrl controller='vlan' action='ajax-get-for-host'}/host/"
+                    + encodeURIComponent( $( "#rstpPortRolesDevice" ).val() ), function( j ){
+
+            var options = "<option></option>\n";
+
+            $.each( j, function(key, val) {
+                options += "<option value=\"" + key + "\">" + key + " - " + val + "</option>\n";
+            });
+
+            $( "#limitToVlan" ).html( options );
+            $( "#limitToVlan" ).trigger( "liszt:updated" );
+        });
+
+        $( "#limitToVlan" ).removeAttr( 'disabled' );
+    });
+});
+
+</script>
 
 {include file="footer.phtml"}
