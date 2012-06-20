@@ -55,11 +55,11 @@ class CdpController extends OSS_Controller_Action
         {
             try
             {
-                $host = new \OSS\SNMP( $host, $this->_options['community'] );
+                $host = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
                 $this->view->host = $host;
                 $this->view->neighbours = $host->useCisco_CDP()->neighbours( true, $this->_options['cdp']['l2topology']['ignore'] );
             }
-            catch( \OSS\Exception $e )
+            catch( \OSS_SNMP\Exception $e )
             {
                 $this->addMessage( "Could not perform CDP neighbour discovery on the requested host", OSS_Message::ERROR );
                 $this->_forward( 'index' );
@@ -84,12 +84,12 @@ class CdpController extends OSS_Controller_Action
 
         try
         {
-            $host = new \OSS\SNMP( $cdp_root, $this->_options['community'] );
+            $host = new \OSS_SNMP\SNMP( $cdp_root, $this->_options['community'] );
             $this->view->host = $host;
             $this->view->deviceId = $host->useCisco_CDP()->id();
             $this->view->neighbours = $host->useCisco_CDP()->neighbours();
         }
-        catch( \OSS\Exception $e )
+        catch( \OSS_SNMP\Exception $e )
         {
             $this->addMessage( "Could not perform CDP neighbour discovery on the requested host", OSS_Message::ERROR );
             $this->_forward( 'index' );
@@ -127,7 +127,7 @@ class CdpController extends OSS_Controller_Action
                     break;
                 }
 
-                $root = new \OSS\SNMP( $host, $this->_options['community'] );
+                $root = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
 
                 $devices = array();
                 $root->useCisco_CDP()->crawl( $devices, null, $ignoreList );
@@ -173,7 +173,7 @@ class CdpController extends OSS_Controller_Action
      */
     public function cliGenerateDeviceIniAction()
     {
-        $root = new \OSS\SNMP( $this->_options['cdp']['default_root'], $this->_options['community'] );
+        $root = new \OSS_SNMP\SNMP( $this->_options['cdp']['default_root'], $this->_options['community'] );
         $devices = array();
         $devices = $root->useCisco_CDP()->crawl( $devices, null );
         ksort( $devices, SORT_REGULAR );
@@ -199,7 +199,7 @@ class CdpController extends OSS_Controller_Action
 
         if( strlen( $host ) )
         {
-            $root = new \OSS\SNMP( $host, $this->_options['community'] );
+            $root = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
             $this->view->vlans = $root->useCisco_VTP()->vlanNames();
         }
 
@@ -261,8 +261,8 @@ class CdpController extends OSS_Controller_Action
                                 $devices[ $aDevice ][ $bDevice ][ $idx ][ 'remoteRSTP' ] = $portRoles[ $bDevice ][ $portDetails['remotePortId'] ];
 
                                 // indicate if the link is passing traffic or not
-                                if( in_array( $devices[ $aDevice ][ $bDevice ][ $idx ][ 'localRSTP' ], \OSS\SNMP\MIBS\Cisco\RSTP::$STP_X_RSTP_PASSING_PORT_ROLES )
-                                            && in_array( $devices[ $aDevice ][ $bDevice ][ $idx ][ 'remoteRSTP' ], \OSS\SNMP\MIBS\Cisco\RSTP::$STP_X_RSTP_PASSING_PORT_ROLES ) )
+                                if( in_array( $devices[ $aDevice ][ $bDevice ][ $idx ][ 'localRSTP' ], \OSS_SNMP\MIBS\Cisco\RSTP::$STP_X_RSTP_PASSING_PORT_ROLES )
+                                            && in_array( $devices[ $aDevice ][ $bDevice ][ $idx ][ 'remoteRSTP' ], \OSS_SNMP\MIBS\Cisco\RSTP::$STP_X_RSTP_PASSING_PORT_ROLES ) )
                                     $devices[ $aDevice ][ $bDevice ][ $idx ][ 'RSTPpassing' ] = true;
                                 else
                                     $devices[ $aDevice ][ $bDevice ][ $idx ][ 'RSTPpassing' ] = false;
@@ -304,7 +304,7 @@ class CdpController extends OSS_Controller_Action
     {
         try
         {
-            $_h = new \OSS\SNMP( $device, $this->_options['community'] );
+            $_h = new \OSS_SNMP\SNMP( $device, $this->_options['community'] );
             return $_h->useCisco_RSTP()->rstpPortRole( $vlanid, true );
         }
         catch( Exception $e )

@@ -55,11 +55,11 @@ class VlanController extends OSS_Controller_Action
             $this->view->source = $source = $this->_getParam( 'source' );
             try
             {
-                $host = new \OSS\SNMP( $source, $this->_options['community'] );
+                $host = new \OSS_SNMP\SNMP( $source, $this->_options['community'] );
                 $devices_vlans[ $source ] = $host->useCisco_VTP()->vlanNames();
                 unset( $host );
             }
-            catch( \OSS\Exception $e )
+            catch( \OSS_SNMP\Exception $e )
             {
                 $this->addMessage( "Could not get VLANs from " . $source, OSS_Message::ERROR );
                 return;
@@ -76,11 +76,11 @@ class VlanController extends OSS_Controller_Action
 
                     try
                     {
-                        $host = new \OSS\SNMP( $dev, $this->_options['community'] );
+                        $host = new \OSS_SNMP\SNMP( $dev, $this->_options['community'] );
                         $devices_vlans[ $dev ] = $host->useCisco_VTP()->vlanNames();
                         unset( $host );
                     }
-                    catch( \OSS\Exception $e )
+                    catch( \OSS_SNMP\Exception $e )
                     {
                         $this->addMessage( "Could not get VLANs from " . $dev, OSS_Message::WARNING );
                         if( isset( $devices_vlans[ $dev ] ) ) unset( $devices_vlans[ $dev ] );
@@ -133,11 +133,11 @@ class VlanController extends OSS_Controller_Action
         {
             try
             {
-                $device = new \OSS\SNMP( $host, $this->_options['community'] );
+                $device = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
                 $vlans = $device->useCisco_VTP()->vlanNames();
                 unset( $device );
             }
-            catch( \OSS\Exception $e )
+            catch( \OSS_SNMP\Exception $e )
             {
                 return;
             }

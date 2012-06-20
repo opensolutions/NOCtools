@@ -44,6 +44,7 @@ class StpController extends OSS_Controller_Action
      * Compare VLANs configured across devices.
      *
      * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Comparison
+     */
     public function rstpPortRolesAction()
     {
         if( $this->getRequest()->isPost() )
@@ -53,10 +54,10 @@ class StpController extends OSS_Controller_Action
 
             try
             {
-                $host = new \OSS\SNMP( $device, $this->_options['community'] );
+                $host = new \OSS_SNMP\SNMP( $device, $this->_options['community'] );
                 $vlans = $host->useCisco_VTP()->vlanNames();
             }
-            catch( \OSS\Exception $e )
+            catch( \OSS_SNMP\Exception $e )
             {
                 $this->addMessage( "Could not query VLAN and port role information via SNMP from " . $device, OSS_Message::ERROR );
                 return;
@@ -83,7 +84,7 @@ class StpController extends OSS_Controller_Action
                         if( !isset( $portsInRSTP[ $portId ] ) )
                             $portsInRSTP[ $portId ] = $portId;
                 }
-                catch( \OSS\Exception $e )
+                catch( \OSS_SNMP\Exception $e )
                 {
                     $unknowns[ $vid ] = $vname;
                 }
