@@ -27,6 +27,7 @@
  * CdpController
  *
  * @author Barry O'Donovan <barry@opensolutions.ie>
+ * @see https://github.com/opensolutions/NOCtools/wiki/Cisco-Discovery-Protocol
  */
 
 class CdpController extends OSS_Controller_Action
@@ -41,6 +42,11 @@ class CdpController extends OSS_Controller_Action
     }
 
 
+    /**
+     * For a given switch, display its CDP neighbours with information and also a graph showing connected ports.
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/CDP-Neighbours
+     */
     public function neighboursAction()
     {
         $this->view->cdp_root = $host = $this->_getParam( 'cdp_root', '' );
@@ -61,6 +67,10 @@ class CdpController extends OSS_Controller_Action
         }
     }
 
+    /**
+     * Generate and serve generated image from neighboursAction()
+     * @see CdpController::neighboursAction()
+     */
     public function imgNeighboursGraphAction()
     {
         $this->view->cdp_root = $cdp_root = $this->_getParam( 'cdp_root', '' );
@@ -90,6 +100,11 @@ class CdpController extends OSS_Controller_Action
         readfile( $this->generateDotGraph( $file, $this->view->render( 'cdp/img-neighbours-graph.dot' ) ) );
     }
 
+    /**
+     * Graph the layer 2 network topology based on a recursive crawl of CDP neighbours.
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/CDP-L2-Topology
+     */
     public function l2TopologyAction()
     {
         if( $this->getRequest()->isPost() )
@@ -138,6 +153,10 @@ class CdpController extends OSS_Controller_Action
 
     }
 
+    /**
+     * Serve generated image from l2TopologyAction()
+     * @see CdpController::l2TopologyAction()
+     */
     public function imgL2TopologyAction()
     {
         if( isset( $this->getSessionNamespace()->l2_topology_file ) )
@@ -147,6 +166,11 @@ class CdpController extends OSS_Controller_Action
         }
     }
 
+    /**
+     * A CLI tool to generate a list of devices by performing a CDP crawl.
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/Devices-Configuration
+     */
     public function cliGenerateDeviceIniAction()
     {
         $root = new \OSS\SNMP( $this->_options['cdp']['default_root'], $this->_options['community'] );
@@ -159,7 +183,11 @@ class CdpController extends OSS_Controller_Action
     }
 
 
-
+    /**
+     * Similar to L2 Topology above but this takes a specific VLAN and identifies and graphs Per-VLAN Spanning Tree port roles.
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/CDP-RSTP-Port-Roles
+     */
     public function rstpTopologyAction()
     {
         $this->view->cdp_root               = $host                   = $this->_getParam( 'cdp_root', '' );
@@ -285,6 +313,10 @@ class CdpController extends OSS_Controller_Action
         }
     }
 
+    /**
+     * Serve generated image from rstpTopologyAction()
+     * @see CdpController::rstpTopologyAction()
+     */
     public function imgRstpTopologyAction()
     {
         if( isset( $this->getSessionNamespace()->rstp_topology_file ) )

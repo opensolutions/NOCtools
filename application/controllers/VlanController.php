@@ -26,6 +26,7 @@
 /**
  * VlanController
  *
+ * @see https://github.com/opensolutions/NOCtools/wiki/VLAN
  * @author Barry O'Donovan <barry@opensolutions.ie>
  */
 
@@ -39,6 +40,12 @@ class VlanController extends OSS_Controller_Action
     {
     }
 
+    /**
+     * A tool that will compare VLANs available (and their respective names) across selected
+     * devices allowing you to ensure consistency as well as perform simple security audits.
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Comparison
+     */
     public function compareAction()
     {
         if( $this->getRequest()->isPost() )
@@ -110,6 +117,14 @@ class VlanController extends OSS_Controller_Action
 
     }
 
+    /**
+     * AJAX function to provide a JSON list of VLANs configured on a particular device.
+     *
+     * For example, used to dynamically populate dropdowns in @see VlanController::compareAction()
+     *
+     * @param string $host The SNMP addressable hostname of the device to query for VLAN IDs and names
+     * @return JSON Encoded array of [vlanId] => 'vlanName' entries.
+     */
     public function ajaxGetForHostAction()
     {
         $host = $this->_getParam( 'host', null );

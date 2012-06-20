@@ -27,6 +27,7 @@
  * StpController
  *
  * @author Barry O'Donovan <barry@opensolutions.ie>
+ * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Comparison
  */
 
 class StpController extends OSS_Controller_Action
@@ -39,6 +40,10 @@ class StpController extends OSS_Controller_Action
     {
     }
 
+    /**
+     * Compare VLANs configured across devices.
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Comparison
     public function rstpPortRolesAction()
     {
         if( $this->getRequest()->isPost() )
