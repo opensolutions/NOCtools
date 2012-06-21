@@ -36,6 +36,13 @@ cmd.dot = "/usr/bin/dot"
 utilsClass = 'OSS_NOCtools_Utils'
 
 
+;; Selectivily disable components you do not want by setting to false
+controller.asterisk.enabled = true
+controller.cdp.enabled      = true
+controller.stp.enabled      = true
+controller.vlan.enabled     = true
+
+
 [production : user]
 
 ; Use minified CSS / JS

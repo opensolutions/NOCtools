@@ -48,16 +48,16 @@ class AsteriskController extends OSS_Controller_Action
     private function _timeticksToString( $tt )
     {
         $secs = floor( $tt / 100 );
-        
+
         $days = floor( $secs / 60 / 60 / 24 );
         $secs -= $days * 60 * 60 * 24;
-        
+
         $hrs  = floor( $secs / 60 / 60 );
         $secs -= $hrs * 60 * 60;
-        
+
         $mins = floor( $secs / 60 );
         $secs -= $mins * 60;
-        
+
         return sprintf( "%d days, %02d:%02d:%02d", $days, $hrs, $mins, $secs );
     }
 
@@ -71,25 +71,25 @@ class AsteriskController extends OSS_Controller_Action
         if( $host )
         {
             $device = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
-            
+
             $details['astVersion'] = $device->useAsterisk()->version();
             $details['astTag']     = $device->useAsterisk()->tag();
-            
+
             $details['astUptime']  = $this->_timeticksToString( $device->useAsterisk()->uptime() );
             $details['astReload']  = $this->_timeticksToString( $device->useAsterisk()->reloadTime() );
-            
+
             $details['astCallsProcessed'] = $device->useAsterisk()->callsProcessed();
             $details['astCallsActive']    = $device->useAsterisk()->callsActive();
-            
+
             $details['calls'] = $device->useAsterisk_Channels()->channelDetails( true );
-            
+
             unset( $device );
-                
+
             $this->getResponse()
                 ->setHeader('Content-Type', 'application/json')
                 ->setBody( Zend_Json::encode( $details ) )
                 ->sendResponse();
-            
+
             exit( 0 );
         }
     }
