@@ -1,0 +1,64 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+{include file="./bgp-header.phtml"}
+
+
+{if isset( $peers )}
+
+<table class="table">
+
+<thead>
+    <tr>
+        <th>Remote Peer</th>
+        <th>ASN</th>
+        <th>V</th>
+        <th>Msg Rcvd</th>
+        <th>Msg Sent</th>
+        <th>Up/Down</th>
+        <th>Admin</th>
+        <th>Connection</th>
+    </tr>
+</thead>
+
+<tbody>
+    {foreach $peers as $peerIp => $details}
+        <tr>
+            <td>{$details.remoteAddress}</td>
+            <td>{$details.remoteASN}</td>
+            <td>{$details.negotiatedVersion}</td>
+            <td>{$details.inTotalMessages}</td>
+            <td>{$details.outTotalMessages}</td>
+            <td>
+                {assign var="days" value=floor( $details.establishedTime / 60 / 60 / 24 )}
+                {assign var="secs" value=$details.establishedTime-($days * 60 * 60 * 24)}
+                {if $details.establishedTime}{$days} days{if $secs}, {$secs|date_format:"%H:%M:%S"}{/if}{else}0{/if}
+            </td>
+            <td>
+                {if $details.adminState eq 'start'}
+                    <span class="label label-success">start</span>
+                {else}
+                    <span class="label label-important">{$details.adminState}</span>
+                {/if}
+            </td>
+            <td>
+                {if $details.connectionState eq 'established'}
+                    <span class="label label-success">established</span>
+                {else}
+                    <span class="label label-important">{$details.connectionState}</span>
+                {/if}
+            </td>
+        </tr>
+    {/foreach}
+</tbody>
+
+</table>
+
+
+{/if}
+
+
+</div>
+
+{include file="footer.phtml"}

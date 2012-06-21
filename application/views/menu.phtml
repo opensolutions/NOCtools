@@ -13,6 +13,11 @@
                         <a href="{genUrl controller="asterisk"}">Asterisk</a>
                     </li>
                 {/if}
+                {if !isset( $options.controller.bgp.enabled ) or $options.controller.bgp.enabled}
+                    <li {if $controller eq 'bgp'}class="active"{/if}>
+                        <a href="{genUrl controller="bgp"}">BGP</a>
+                    </li>
+                {/if}
                 {if !isset( $options.controller.cdp.enabled ) or $options.controller.cdp.enabled}
                     <li {if $controller eq 'cdp'}class="active"{/if}>
                         <a href="{genUrl controller="cdp"}">CDP</a>

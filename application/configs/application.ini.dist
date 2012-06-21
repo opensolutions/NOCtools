@@ -38,6 +38,7 @@ utilsClass = 'OSS_NOCtools_Utils'
 
 ;; Selectivily disable components you do not want by setting to false
 controller.asterisk.enabled = true
+controller.bgp.enabled      = true
 controller.cdp.enabled      = true
 controller.stp.enabled      = true
 controller.vlan.enabled     = true
