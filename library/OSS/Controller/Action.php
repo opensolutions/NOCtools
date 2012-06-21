@@ -168,6 +168,8 @@ class OSS_Controller_Action extends Zend_Controller_Action
         if( is_readable( APPLICATION_PATH . '/configs/devices.ini' ) )
         {
             $this->_devices = new Zend_Config_Ini( APPLICATION_PATH . '/configs/devices.ini' );
+            
+            $this->view->devices_ini = $this->_devices;
             $this->view->_devices = $this->_devices->devices;
         }
     }

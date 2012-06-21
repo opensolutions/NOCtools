@@ -1,0 +1,200 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<h1>
+    NOCtools - Asterisk Monitor
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="btnRefresh" class="btn hide"><i class="icon-refresh"></i></button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <span id="refreshing">&nbsp;</span>
+</h1>
+
+<br />
+
+{OSS_Message}
+
+<div class="row">
+
+    <div class="span3">
+        <h3>Asterisk Server </h3>
+
+        <p>
+            This tool will allow you to see various details of your
+            Asterisk server in real time.
+        </p>
+        <p>
+            {if isset( $devices_ini->asterisk ) and count( $devices_ini->asterisk )}
+                <select id="astHost" name="astHost" data-placeholder="Choose a device..." class="chzn-select-deselect span3">
+                    <option></option>
+                    {foreach $devices_ini->asterisk as $d}
+                        <option value="{$d}">{$d}</option>
+                    {/foreach}
+                </select>
+            {else}
+                <span class="label label-important">ERROR</span> No asterisk hosts defined in:<br /><br />
+                <code>application/configs/devices.ini</code>
+            {/if}
+        </p>
+    </div>
+
+    <div class="span3">
+        <div class="well">
+            <h3 style="text-align: center;">Asterisk Version</h3>
+            <h4 style="text-align: center;" id="astVersion">&nbsp;</h4>
+            
+            <h3 style="text-align: center;">Asterisk Tag</h3>
+            <h4 style="text-align: center;" id="astTag">&nbsp;</h4>
+        </div>
+    </div>
+
+    <div class="span3">
+        <div class="well">
+            <h3 style="text-align: center;">Uptime</h3>
+            <h4 style="text-align: center;" id="astUptime">&nbsp;</h4>
+            
+            <h3 style="text-align: center;">Last Reload</h3>
+            <h4 style="text-align: center;" id="astReload">&nbsp;</h4>
+        </div>
+    </div>
+
+    <div class="span3">
+        <div class="well">
+            <h3 style="text-align: center;">Calls Processed</h3>
+            <h4 style="text-align: center;" id="astCallsProcessed">&nbsp;</h4>
+            
+            <h3 style="text-align: center;">Calls Active</h3>
+            <h4 style="text-align: center;" id="astCallsActive">&nbsp;</h4>
+        </div>
+    </div>
+
+    
+
+</div>
+
+
+<div class="row">
+    <div class="span12">
+
+        <table class="table table-bordered table-striped">
+        
+        <thead>
+            <tr>
+                <th>Unique ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Bridged With</th>
+                <th>CallerID</th>
+                <th>Dialled Number</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        
+        <tbody id="astCallsTableBody">
+            <tr>
+                <td colspan="7" align="center">
+                    <em>Select an Asterisk host from the dropdown above</em>
+                </td>
+            </tr>
+        </tbody>
+        
+        </table>
+    
+    </div>
+</div>
+
+</div>
+
+<script>
+
+function populateData()
+{
+    $.getJSON( "{genUrl controller='asterisk' action='ajax-get-for-host'}/host/"
+            + encodeURIComponent( $( "#astHost" ).val() ), function( j ){
+
+    	if( j != null && typeof j['astVersion'] != undefined )
+    	{
+        	$( "#astVersion" ).html( j['astVersion'] );
+        	$( "#astTag" ).html( j['astTag'] );
+        	
+        	$( "#astUptime" ).html( j['astUptime'] );
+        	$( "#astReload" ).html( j['astReload'] );
+        
+        	$( "#astCallsProcessed" ).html( j['astCallsProcessed'] );
+        	$( "#astCallsActive" ).html( j['astCallsActive'] );
+        
+        	var table = '';
+
+        	$.each( j['calls'], function( key, details ) {
+        
+        		table += "<tr>"
+        			+ "<td>" + details['chanUniqueId'] + "</td>"
+            		+ "<td>" + details['chanName'] + "</td>"
+        	        + "<td>" + details['chanType'] + "</td>"
+        	        + "<td>" + details['chanBridge'] + "</td>"
+        	        + "<td>" + details['chanCidNum'] + "</td>"
+        	        + "<td>" + details['chanCidDNID'] + "</td>"
+        	        + "<td>" + details['chanState'] + "</td>"
+        	        + "</tr>";
+            	
+        	});
+        
+        	$( "#astCallsTableBody" ).html( table );
+    		$( "#btnRefresh" ).removeAttr( 'disabled' );
+            $( '#refreshing' ).html( '&nbsp;' );
+	    }
+    	else
+    	{
+        	clearData();
+    		$( "#btnRefresh" ).removeAttr( 'disabled' );
+            $( '#refreshing' ).html( '&nbsp;' );
+        }
+    	
+    	
+    });
+}
+
+function clearData() {
+	$( "#btnRefresh" ).hide();
+	$( "#astVersion" ).html( '&nbsp;' );
+	$( "#astTag" ).html( '&nbsp;' );
+	$( "#astUptime" ).html( '&nbsp;' );
+	$( "#astReload" ).html( '&nbsp;' );
+	$( "#astCallsProcessed" ).html( '&nbsp;' );
+	$( "#astCallsActive" ).html( '&nbsp;' );
+	$( "#astCallsTableBody" ).html( '' );
+}
+
+$().ready( function(){
+
+	$( "#btnRefresh" ).on( 'click', function( event ){
+		$( "#btnRefresh" ).attr( 'disabled', 'disabled' );
+		populateData();
+    });
+	
+    $( "#astHost" ).on( 'change', function( event ) {
+
+    	if( $( "#astHost" ).val().length ) {
+        	
+        	$( "#btnRefresh" ).show();
+        	populateData();
+        	
+    	}
+    	else
+    	{
+        	clearData();
+        }
+
+    });
+
+    setInterval( function(){
+        if( $( "#astHost" ).val().length ) {
+        	$( '#refreshing' ).html( '<em>Refreshing...</em>' );
+        	populateData();
+        }
+    }, 5000 );
+});
+
+</script>
+
+{include file="footer.phtml"}

@@ -14,3 +14,9 @@ devices[] = "sw04.example.com"
 devices[] = "rtr01.example.com"
 devices[] = "rtr01.example.com"
 
+;; An array of Asterisk hosts to query by SNMP to populate drop
+;; down menus in NOCtools.
+
+asterisk[] = "ast1.example.com"
+
+

@@ -8,6 +8,9 @@
                 <li {if $controller eq 'index'}class="active"{/if}>
                     <a href="{genUrl}">Home</a>
                 </li>
+                <li {if $controller eq 'asterisk'}class="active"{/if}>
+                    <a href="{genUrl controller="asterisk"}">Asterisk</a>
+                </li>
                 <li {if $controller eq 'cdp'}class="active"{/if}>
                     <a href="{genUrl controller="cdp"}">CDP</a>
                 </li>
