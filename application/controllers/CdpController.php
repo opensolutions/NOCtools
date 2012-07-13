@@ -57,7 +57,7 @@ class CdpController extends OSS_Controller_Action
             {
                 $host = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
                 $this->view->host = $host;
-                $this->view->neighbours = $host->useCisco_CDP()->neighbours( true, $this->_options['cdp']['l2topology']['ignore'] );
+                $this->view->neighbours = $host->useCisco_CDP()->neighbours( true, $this->_getIgnoreList() );
             }
             catch( \OSS_SNMP\Exception $e )
             {
@@ -148,7 +148,7 @@ class CdpController extends OSS_Controller_Action
         }
         else
         {
-            $this->view->ignoreList = implode( "\n", $this->_options['cdp']['l2topology']['ignore'] );
+            $this->view->ignoreList = implode( "\n", $this->_getIgnoreList() );
         }
 
     }
@@ -195,7 +195,7 @@ class CdpController extends OSS_Controller_Action
         $this->view->excludeNonParticipants = true;
         $this->view->showPortRoles          = true;
 
-        $this->view->ignoreList = implode( "\n", $this->_options['cdp']['l2topology']['ignore'] );
+        $this->view->ignoreList = implode( "\n", $this->_getIgnoreList() );
 
         if( strlen( $host ) )
         {
@@ -326,5 +326,20 @@ class CdpController extends OSS_Controller_Action
         }
     }
 
+
+    /**
+     * Get the ignore list - list of hosts that should not be polled for CDP data
+     *
+     * This is set in `application.ini` and this function just sanitsies is.
+     *
+     * @return array The ignore list or empty array
+     */
+    protected function _getIgnoreList()
+    {
+        if( isset( $this->_options['cdp']['l2topology']['ignore'] ) && is_array( $this->_options['cdp']['l2topology']['ignore'] ) )
+            return $this->_options['cdp']['l2topology']['ignore'];
+
+        return array();
+    }
 
 }
