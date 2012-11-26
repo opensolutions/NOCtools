@@ -141,6 +141,16 @@ class CdpController extends OSS_Controller_Action
                 $this->view->locations = call_user_func( "{$this->_options['utilsClass']}::extractLocations", $devices );
 
                 $this->view->file = $file = $this->generateGraphFilename( array( $host ) );
+
+                if( $this->_getParam( 'submit' ) == 'Download DOT File' )
+                {
+                    header( 'Content-type: text/plain' );
+                    header( 'Content-Disposition: attachment; filename="' . $file . '.dot"' );
+                    Zend_Controller_Action_HelperBroker::removeHelper( 'viewRenderer' );
+                    echo $this->view->render( 'cdp/l2-topology-graph.dot' );
+                    return;
+                }
+
                 $this->getSessionNamespace()->l2_topology_file
                     = $this->generateDotGraph( $file, $this->view->render( 'cdp/l2-topology-graph.dot' ), APPLICATION_PATH . '/../var/tmp' );
 
@@ -285,6 +295,16 @@ class CdpController extends OSS_Controller_Action
 
 
                 $this->view->file = $file = $this->generateGraphFilename( array( $host, $vlanid ) );
+
+                if( $this->_getParam( 'submit' ) == 'Download DOT File' )
+                {
+                    header( 'Content-type: text/plain' );
+                    header( 'Content-Disposition: attachment; filename="' . $file . '.dot"' );
+                    Zend_Controller_Action_HelperBroker::removeHelper( 'viewRenderer' );
+                    echo $this->view->render( 'cdp/rstp-topology-graph.dot' );
+                    return;
+                }
+
                 $this->getSessionNamespace()->rstp_topology_file
                     = $this->generateDotGraph( $file, $this->view->render( 'cdp/rstp-topology-graph.dot' ), APPLICATION_PATH . '/../var/tmp' );
 
