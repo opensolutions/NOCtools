@@ -77,23 +77,23 @@ temporary_directory = APPLICATION_PATH "/../var/tmp"
 
 resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
 
-resources.logger.enabled = 1
-resources.logger.writers.stream.level = 7
-resources.logger.writers.stream.path = APPLICATION_PATH "/../var/log"
-resources.logger.writers.stream.owner = www-data
-resources.logger.writers.stream.group = www-data
+ondemand_resources.logger.enabled = 1
+ondemand_resources.logger.writers.stream.level = 7
+ondemand_resources.logger.writers.stream.path = APPLICATION_PATH "/../var/log"
+ondemand_resources.logger.writers.stream.owner = www-data
+ondemand_resources.logger.writers.stream.group = www-data
 
 resources.namespace.checkip = 0
 resources.session.save_path = APPLICATION_PATH "/../var/session"
 resources.session.use_only_cookies = true
 resources.session.remember_me_seconds = 900
 
-resources.mailer.smtphost = "mail.example.com"
-;resources.mailer.username = "user"
-;resources.mailer.password = 'pass'
-;resources.mailer.ssl = 'ssl'
-;resources.mailer.port = 465
-;resources.mailer.auth = plain
+ondemand_resources.mailer.smtphost = "mail.example.com"
+;ondemand_resources.mailer.username = "user"
+;ondemand_resources.mailer.password = 'pass'
+;ondemand_resources.mailer.ssl = 'ssl'
+;ondemand_resources.mailer.port = 465
+;ondemand_resources.mailer.auth = plain
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
