@@ -29,7 +29,7 @@
  * @author Barry O'Donovan <barry@opensolutions.ie>
  * @see https://github.com/opensolutions/NOCtools/wiki/Asterisk
  */
-class AsteriskController extends OSS_Controller_Action
+class AsteriskController extends NOCtools_Controller_Action
 {
 
     /**

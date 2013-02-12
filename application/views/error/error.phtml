@@ -1,57 +1,68 @@
-{include file="header.phtml"}
+{tmplinclude file="header.phtml"}
 
-<div class="container">
 
-<div class="hero-unit">
-    <h1>Unexpected Error!</h1>
-    <p>We apologise but an unexpected server error has occured.</p>
-        
-    <p>
-        Please mail our support team with a description of what you were doing when the error
-        occured and we will rectify it as soon as possible. Our support team can be reached via
-        {mailto address="{$options.support.email.address}"}.
-    </p>
-</div>
+<div class="page-content" >
 
-{if $options.phpSettings.display_errors}
+    <div class="page-header" >
+        <h1>Unexpected Error</h1>
+    </div>
 
-    <div class="alert alert-block">
-        <h4 class="alert-heading">Development Platform Detected!</h4>
-        Displaying of errors is enabled as <code>phpSettings.display_errors</code> is set
-        by default or in <code>application.ini</code>. Set to <code>false</code> in production
-        to present the display of errors.
+
+{OSS_Message}
+
+<p align="center">
+
+<table width="80%" align="center">
+<tr>
+    <td valign="top" align="center">
+        <br />
+        <h3>Uh oh! Unexpected Error!</h3>
+
+        <p>We're very sorry but something we didn't expect has just happened.</p>
+        <p>We've alerted the web monkeys and, after a severe flogging, they will get it fixed as soon as possible.</p>
+        <p>Please feel free to email the {mailto address=$options.identity.email encode='javascript' text=$options.identity.name}</p>
+    </td>
+</tr>
+</table>
+
+</p>
+
+{if isset( $options.phpSettings.display_errors ) and $options.phpSettings.display_errors}
+
+    <div class="alert alert-warning">
+        <p>
+            <strong>Development Platform Detected!</strong> Display errors enabled via <code>application.ini</code>. Disable in production!
+        </p>
     </div>
     
-    {foreach name=excepts from=$exceptions item=e}
-    
-        {if not $smarty.foreach.excepts.first}
-        	<hr />
-        {/if}
-    
-        <h2>Exception #{counter}</h2>
-        
-        <dl>
-            <dt>File</dt>
-            <dd>{$e->getFile()}</dd>
-        
-            <dt>Line</dt>
-            <dd>{$e->getLine()}</dd>
-        
-            <dt>Message</dt>
-            <dd>{$e->getMessage()}</dd>
-        
-            <dt>Code</dt>
-            <dd>{$e->getCode()}</dd>
-        </dl>
-    
-        <h4>Trace</h4>
-    
-        <pre>{$e->getTraceAsString()}</pre>
-    
-    {/foreach}
+    {if isset( $exceptions )}
 
+        {foreach $exceptions as $exception}
+        
+            <h2>{get_class( $exception )}</h2>
+            
+            <dl>
+                <dt>File</dt>
+                <dd>{$exception->getFile()}</dd>
+        
+                <dt>Line</dt>
+                <dd>{$exception->getLine()}</dd>
+        
+                <dt>Message</dt>
+                <dd>{$exception->getMessage()}</dd>
+        
+                <dt>Code</dt>
+                <dd>{$exception->getCode()}</dd>
+            </dl>
+        
+            <h3>Trace</h3>
+        
+            <pre>{$exception->getTraceAsString()}</pre>
+
+        {/foreach}
+    
+    {/if}
 {/if}
 
 </div>
-
-{include file="footer.phtml"}
+{tmplinclude file="footer.phtml"}

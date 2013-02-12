@@ -30,7 +30,7 @@
  * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Comparison
  */
 
-class StpController extends OSS_Controller_Action
+class StpController extends NOCtools_Controller_Action
 {
 
     /**
