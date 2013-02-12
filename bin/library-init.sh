@@ -67,7 +67,7 @@ fi
 if [[ -e $LIBDIR/Zend ]]; then
     echo Zend exists - skipping!
 else
-    svn co http://framework.zend.com/svn/framework/standard/branches/release-1.11/library/Zend/ $LIBDIR/Zend
+    svn co http://framework.zend.com/svn/framework/standard/branches/release-1.12/library/Zend/ $LIBDIR/Zend
 fi
 
 
@@ -79,3 +79,18 @@ else
     svn co http://smarty-php.googlecode.com/svn/trunk/distribution/libs/ $LIBDIR/Smarty
 fi
 
+# OSS-Framework
+if [[ -e $LIBDIR/OSS-Framework.git ]]; then
+    echo OSS-Framework.git exists - skipping!
+else  
+    git clone git://github.com/opensolutions/OSS-Framework.git $LIBDIR/OSS-Framework.git
+fi
+    
+# Twitter form decorators
+if [[ -e $LIBDIR/Bootstrap-Zend-Framework ]]; then  
+    echo Bootstrap-Zend-Framework exists - skipping!
+else
+    git clone git://github.com/opensolutions/Bootstrap-Zend-Framework.git $LIBDIR/Bootstrap-Zend-Framework
+fi
+            
+        

@@ -38,7 +38,22 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initOSSAutoLoader()
     {
         $autoloader = Zend_Loader_Autoloader::getInstance();
-        $autoloader->registerNamespace('OSS');
+        $autoloader->registerNamespace( 'OSS' );
+    }
+
+
+    /**
+     * Register the NOCtools library autoloader
+     *
+     * This function ensures that classes from library/NOCtools are automatically
+     * loaded from the subdirectories where subdirectories are indicated by
+     * underscores in the same manner as Zend.
+     *
+     */
+    protected function _initNOCtoolsAutoLoader()
+    {
+        $autoloader = Zend_Loader_Autoloader::getInstance();
+        $autoloader->registerNamespace( 'NOCtools' );
     }
 
 

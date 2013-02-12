@@ -58,8 +58,9 @@ phpSettings.display_startup_errors = 0
 phpSettings.display_errors = 0
 
 includePaths.library = APPLICATION_PATH "/../library"
+includePaths.osslibrary = APPLICATION_PATH "/../library/OSS-Framework.git"
 
-pluginPaths.OSS_Resource = APPLICATION_PATH "/../library/OSS/Resource"
+pluginPaths.OSS_Resource = APPLICATION_PATH "/../library/OSS-Framework.git/OSS/Resource"
 
 bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
 bootstrap.class = "Bootstrap"
@@ -102,7 +103,7 @@ resources.smarty.enabled   = 1
 resources.smarty.templates = APPLICATION_PATH "/views"
 resources.smarty.compiled  = APPLICATION_PATH "/../var/templates_c"
 resources.smarty.cache     = APPLICATION_PATH "/../var/cache"
-resources.smarty.plugins[] = APPLICATION_PATH "/../library/OSS/Smarty/functions"
+resources.smarty.plugins[] = APPLICATION_PATH "/../library/OSS-Framework.git/OSS/Smarty/functions"
 resources.smarty.plugins[] = APPLICATION_PATH "/../library/Smarty/plugins"
 resources.smarty.plugins[] = APPLICATION_PATH "/../library/Smarty/sysplugins"
 resources.smarty.debugging = 0

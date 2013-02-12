@@ -45,18 +45,23 @@ fi
 LIBDIR=`dirname "$0"`/../library
 TOPDIR=`dirname "$0"`/..
 
-cd $LIBDIR/Minify
-git pull
-cd -
-
 cd $LIBDIR/OSS_SNMP
 git pull
 cd -
 
-for name in Zend Smarty; do
+cd $LIBDIR/Bootstrap-Zend-Framework
+git pull
+cd -
+
+cd $LIBDIR/Minify
+git pull
+cd -
+
+for name in Smarty Zend; do
     echo -e "\n\n\n\n\n-------------\n\nUpdating $name..."
     cd $LIBDIR/$name
     svn up
     cd -
 done
 
+                

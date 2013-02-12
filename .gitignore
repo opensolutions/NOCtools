@@ -13,6 +13,8 @@ library/Minify
 library/OSS_SNMP
 library/Smarty
 library/Zend
+library/Bootstrap-Zend-Framework
+library/OSS-Framework.git
 
 var/templates_c/*.php
 var/log/20*

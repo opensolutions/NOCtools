@@ -48,7 +48,7 @@ if( getenv( 'APPLICATION_TESTING' ) )
 else
     define( 'APPLICATION_TESTING', 0 );
 
-require_once( APPLICATION_PATH . '/../library/OSS/Version.php' );
+require_once( APPLICATION_PATH . '/../library/NOCtools/Version.php' );
 
 // Ensure library/ is in include_path
 set_include_path( implode( PATH_SEPARATOR, array( realpath( APPLICATION_PATH . '/../library' ), get_include_path() ) ) );
