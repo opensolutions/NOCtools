@@ -30,7 +30,7 @@
  * @see https://github.com/opensolutions/NOCtools/wiki/Cisco-Discovery-Protocol
  */
 
-class CdpController extends OSS_Controller_Action
+class CdpController extends NOCtools_Controller_Action
 {
 
     /**

@@ -30,7 +30,7 @@
  * @author Barry O'Donovan <barry@opensolutions.ie>
  */
 
-class VlanController extends OSS_Controller_Action
+class VlanController extends NOCtools_Controller_Action
 {
 
     /**

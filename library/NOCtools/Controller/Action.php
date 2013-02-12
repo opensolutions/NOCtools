@@ -7,7 +7,7 @@
     This file is part of the NOCtools package.
 
     Contact: Barry O'Donovan - barry (at) opensolutions (dot) ie
-             http://www.opensolutions.ie/
+    http://www.opensolutions.ie/
 
     NOCtools is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,22 +21,20 @@
 
     You should have received a copy of the GNU General Public License
     along with NOCtools.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 /**
- * IndexController
+ * Controller: Action
  *
- * @author
- * @version
+ * @author     Barry O'Donovan <barry@opensolutions.ie>
  */
-
-class IndexController extends NOCtools_Controller_Action
+class NOCtools_Controller_Action extends OSS_Controller_Action
 {
-
-    /**
-     * The default action - show the home page
-     */
-    public function indexAction()
-    {
-    }
+    // traits we want to use
+    use OSS_Controller_Action_Trait_Namespace;
+    use OSS_Controller_Action_Trait_Mailer;
+    use OSS_Controller_Action_Trait_Logger;
+    use OSS_Controller_Action_Trait_Smarty;
+    use OSS_Controller_Action_Trait_Messages;
+    
 }

@@ -30,7 +30,7 @@
  * @see https://github.com/opensolutions/NOCtools/wiki/BGP
  */
 
-class BgpController extends OSS_Controller_Action
+class BgpController extends NOCtools_Controller_Action
 {
 
     /**
