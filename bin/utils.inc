@@ -30,7 +30,7 @@
  */
 
 // load version information
-require_once( dirname( __FILE__ ) . '/../library/OSS/Version.php' );
+require_once( dirname( __FILE__ ) . '/../library/NOCtools/Version.php' );
 
 /**
  * Parses public/.htaccess for application environment
