@@ -14,7 +14,7 @@ This project originally started out as a way to highlight and utilise our
 
 It since grew into a way to graphically present information on network topology that is normally
 difficult and cumbersome to do by logging into individual devices. Such information includes a
-discovered L2 topology by CDP, using this to present rapid-PVST port roles and so forth.
+discovered L2 topology by CDP, using this to present rapid-PVST or MST port roles and so forth.
 
 Behind the Tools
 -----------------
@@ -22,8 +22,9 @@ Behind the Tools
 **NOCtools** is written in PHP using the [Zend Framework](http://framework.zend.com/) (V1.x)
 as the application controller and using [Smarty](http://www.smarty.net/) as the templating engine.
 There is no real reliance on external libraries besides both of these and
-[OSS_SNMP](https://github.com/opensolutions/OSS_SNMP) (which requires some of the new features
-of PHP 5.4). The frontend is thanks to [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
+[OSS_SNMP](https://github.com/opensolutions/OSS_SNMP) and
+[OSS-Framework](https://github.com/opensolutions/OSS-Framework). The frontend is thanks 
+to [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
 **NOCtools** is open source software which is hosted on [GitHub](https://github.com/opensolutions/NOCtools).
 You can fork us, follow us, raise tickets and - hopefully - raise some pull requests with new tools and features!
