@@ -53,7 +53,7 @@
             to discover its RSTP topology and connected
             port roles SNMP and CDP.
         </p>
-        <form action="{genUrl controller="cdp" action="rstp-topology"}" method="post">
+        <form action="{genUrl controller="cdp" action="stp-topology" type='rstp'}" method="post">
             {if isset( $_devices ) and count( $_devices )}
                 <select name="cdp_root" data-placeholder="Choose a device..." class="chzn-select span3">
                 {foreach $_devices as $d}
@@ -72,6 +72,29 @@
     </div>
 
     <div class="span3">
+        <h3>MST Topology &amp; Port Roles</h3>
+
+        <p>
+            Enter an IP address / hostname below
+            to discover its MST topology and connected
+            port roles via SNMP and CDP.
+        </p>
+        <form action="{genUrl controller="cdp" action="stp-topology" type='mst'}" method="post">
+            {if isset( $_devices ) and count( $_devices )}
+                <select name="cdp_root" data-placeholder="Choose a device..." class="chzn-select span3">
+                {foreach $_devices as $d}
+                    <option value="{$d}" {if ( isset( $cdp_root ) and $cdp_root eq $d ) or ( !isset( $cdp_root ) and isset( $options.cdp.default_root ) and $options.cdp.default_root eq $d )}selected="selected"{/if}>{$d}</option>
+                {/foreach}
+                </select>
+            {else}
+                <input type="text" class="span3" name="cdp_root"
+                    value="{if isset( $cdp_root )}{$cdp_root}{elseif isset( $options.cdp.default_root )}{$options.cdp.default_root}{/if}"
+                    placeholder="IP / Hostname..."
+                />
+            {/if}
+            <br /><br />
+            <input type="submit" value="Submit &raquo;" class="btn" />
+        </form>
     </div>
 
 

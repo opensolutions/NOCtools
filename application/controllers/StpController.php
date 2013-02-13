@@ -108,5 +108,39 @@ class StpController extends NOCtools_Controller_Action
         }
 
     }
+    
+    /**
+     * AJAX function to provide a JSON list of MST instances on a particular device.
+     *
+     * For example, used to dynamically populate dropdowns in @see CdpController::stpTopologyAction()
+     *
+     * @param string $host The SNMP addressable hostname of the device to query for MST instances
+     * @return JSON Encoded array of [instanceId] => 'instanceName' entries.
+     */
+    public function ajaxGetMstInstancesForHostAction()
+    {
+        $host = $this->_getParam( 'host', null );
+
+        if( $host )
+        {
+            try
+            {
+                $device = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
+                $instances = $device->useCisco_SMST()->instances();
+                unset( $device );
+            }
+            catch( \OSS_SNMP\Exception $e )
+            {
+                return;
+            }
+
+            $this->getResponse()
+                ->setHeader('Content-Type', 'application/json')
+                ->setBody( Zend_Json::encode( $instances ) )
+                ->sendResponse();
+            exit( 0 );
+        }
+    }
+    
 
 }

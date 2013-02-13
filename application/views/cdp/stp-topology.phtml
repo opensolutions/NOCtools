@@ -2,7 +2,7 @@
 
 <div class="container">
 
-<h1>NOCtools - Cisco Discovery Protocol Utilities - RSTP Topology &amp; Port Roles</h1>
+<h1>NOCtools - Cisco Discovery Protocol Utilities - {$type|upper} Topology &amp; Port Roles</h1>
 
 <br />
 
@@ -16,7 +16,7 @@
         </p>
         <p>
             Start by entering the <em>root node</em> where CDP discovery will start, edit the
-            CDP hosts you want to ignore (will not appear on graph at all) and select the VLAN
+            CDP hosts you want to ignore (will not appear on graph at all) and select the RSTP VLAN / MST instance
             you are interested in to generate the graph.
         </p>
     </div>
@@ -25,7 +25,7 @@
 <div class="row">
 
     <div class="span12 well">
-        <form action="{genUrl controller="cdp" action="rstp-topology"}" method="post">
+        <form action="{genUrl controller="cdp" action="stp-topology" type=$type}" method="post">
 
         <div class="span3">
                 <label>Root Node IP / Hostname:</label>
@@ -53,13 +53,13 @@
         </div>
 
         <div class="span3">
-            <label>RSTP VLAN:</label>
+            <label>{if $type eq 'mst'}MST Instance{else}RSTP VLAN{/if}:</label>
 
-            <select name="vlanid" id="vlanid" data-placeholder="Choose a VLAN..." class="chzn-select span3">
+            <select name="instance" id="instance" data-placeholder="Choose a {if $type eq 'mst'}MST Instance{else}VLAN{/if}..." class="chzn-select span3">
                 <option></option>
-                {if isset( $vlans ) and is_array( $vlans )}
-                    {foreach $vlans as $vid => $vname}
-                        <option value="{$vid}" {if isset( $vlanid ) and $vlanid eq $vid}selected="selected"{/if}>{$vid} - {$vname}</option>
+                {if isset( $instances ) and is_array( $instances )}
+                    {foreach $instances as $iid => $iname}
+                        <option value="{$iid}" {if isset( $instance ) and $iid eq $instance}selected="selected"{/if}>{$iid} - {$iname}</option>
                     {/foreach}
                 {/if}
             </select>
@@ -100,8 +100,8 @@
 
     <ul class="thumbnails">
         <li class="span12">
-            <a href="{genUrl controller="cdp" action="img-rstp-topology" file=$file}" target="_blank">
-                <img src="{genUrl controller="cdp" action="img-rstp-topology" file=$file}" />
+            <a href="{genUrl controller="cdp" action="img-stp-topology" file=$file}" target="_blank">
+                <img src="{genUrl controller="cdp" action="img-stp-topology" file=$file}" />
             </a>
         </li>
     </ul>
@@ -116,25 +116,29 @@
 $().ready( function(){
 
     $( "#cdp_root" ).on( 'change', function( event ) {
-        $( "#vlanid" ).attr( 'disabled', 'disabled' );
+        $( "#instance" ).attr( 'disabled', 'disabled' );
 
-        $( "#vlanid" ).html( '<option>Loading...</option>' ).val( "" );
-        $( "#vlanid" ).trigger( "liszt:updated" );
+        $( "#instance" ).html( '<option>Loading...</option>' ).val( "" );
+        $( "#instance" ).trigger( "liszt:updated" );
 
-        $.getJSON( "{genUrl controller='vlan' action='ajax-get-for-host'}/host/"
-                    + encodeURIComponent( $( "#cdp_root" ).val() ), function( j ){
-
+        {if $type eq 'mst'}
+            $.getJSON( "{genUrl controller='stp' action='ajax-get-mst-instances-for-host'}/host/"
+        {else}
+            $.getJSON( "{genUrl controller='vlan' action='ajax-get-for-host'}/host/"
+        {/if}
+                + encodeURIComponent( $( "#cdp_root" ).val() ), function( j ){
+    
             var options = "<option></option>\n";
 
             $.each( j, function(key, val) {
                 options += "<option value=\"" + key + "\">" + key + " - " + val + "</option>\n";
             });
 
-            $( "#vlanid" ).html( options );
-            $( "#vlanid" ).trigger( "liszt:updated" );
+            $( "#instance" ).html( options );
+            $( "#instance" ).trigger( "liszt:updated" );
         });
 
-        $( "#vlanid" ).removeAttr( 'disabled' );
+        $( "#instance" ).removeAttr( 'disabled' );
     });
 });
 

@@ -197,14 +197,15 @@ class CdpController extends NOCtools_Controller_Action
 
 
     /**
-     * Similar to L2 Topology above but this takes a specific VLAN and identifies and graphs Per-VLAN Spanning Tree port roles.
+     * Similar to L2 Topology above but this takes a specific VLAN / instance and identifies and graphs Per-VLAN/instance Spanning Tree port roles.
      *
      * @see https://github.com/opensolutions/NOCtools/wiki/CDP-RSTP-Port-Roles
      */
-    public function rstpTopologyAction()
+    public function stpTopologyAction()
     {
-        $this->view->cdp_root               = $host                   = $this->_getParam( 'cdp_root', '' );
-        $this->view->vlanid                 = $vlanid                 = $this->_getParam( 'vlanid', false );
+        $this->view->cdp_root               = $host                   = $this->getParam( 'cdp_root', '' );
+        $this->view->type                   = $type                   = $this->getParam( 'type', 'rstp' );
+        $this->view->instance               = $instance               = $this->getParam( 'instance', false );
         $this->view->excludeNonParticipants = true;
         $this->view->showPortRoles          = true;
 
@@ -213,32 +214,36 @@ class CdpController extends NOCtools_Controller_Action
         if( strlen( $host ) )
         {
             $root = new \OSS_SNMP\SNMP( $host, $this->_options['community'] );
-            $this->view->vlans = $root->useCisco_VTP()->vlanNames();
+            
+            if( $type == 'mst' )
+                $this->view->instances = $instances = $root->useCisco_SMST()->instances();
+            else
+                $this->view->instances = $instances = $root->useCisco_VTP()->vlanNames();
         }
 
         if( $this->getRequest()->isPost() )
         {
             do
             {
-                if( $vlanid && $this->_getParam( 'excludeNonParticipants', null ) === null )
+                if( $instance && $this->getParam( 'excludeNonParticipants', null ) === null )
                     $this->view->excludeNonParticipants = $excludeNonParticipants = false;
 
-                if( $vlanid && $this->_getParam( 'showPortRoles', null ) === null )
+                if( $instance && $this->getParam( 'showPortRoles', null ) === null )
                     $this->view->showPortRoles = $showPortRoles = false;
 
-                $this->view->ignoreList = ( isset( $this->view->ignoreList ) ? $this->view->ignoreList : $this->_getParam( 'ignoreList' ) );
+                $this->view->ignoreList = ( isset( $this->view->ignoreList ) ? $this->view->ignoreList : $this->getParam( 'ignoreList' ) );
                 $ignoreList =  array();
 
-                foreach( explode( "\n", $this->_getParam( 'ignoreList' ) ) as $i )
+                foreach( explode( "\n", $this->getParam( 'ignoreList' ) ) as $i )
                     $ignoreList[] = trim( $i );
 
                 if( !strlen( $host ) )
                 {
-                    $this->addMessage( 'You must select a device as the root for CDP neighbour discovery and a VLAN', OSS_Message::ERROR );
+                    $this->addMessage( 'You must select a device as the root for CDP neighbour discovery and a VLAN / instance', OSS_Message::ERROR );
                     break;
                 }
 
-                if( !$vlanid )
+                if( !$instance )
                     break;
 
                 $devices = array();
@@ -248,17 +253,17 @@ class CdpController extends NOCtools_Controller_Action
                 $devices = $root->useCisco_CDP()->collapseDevicesLAGs( $devices );
 
 
-                // now, find the links which are participating in RSTP and their roles
+                // now, find the links which are participating in RSTP / MST and their roles
                 $portRoles = [];
 
                 foreach( $devices as $aDevice => $neighbours )
                 {
                     if( !isset( $portRoles[ $aDevice ] ) )
-                        $portRoles[ $aDevice ] = $this->_rstpTopologyPortRoles( $aDevice, $vlanid );
+                        $portRoles[ $aDevice ] = $this->_stpTopologyPortRoles( $aDevice, $type, $instance );
 
                     foreach( $neighbours as $bDevice => $ports )
                         if( !isset( $portRoles[ $bDevice ] ) )
-                            $portRoles[ $bDevice ] = $this->_rstpTopologyPortRoles( $bDevice, $vlanid );
+                            $portRoles[ $bDevice ] = $this->_stpTopologyPortRoles( $bDevice, $type, $instance );
                 }
 
 
@@ -304,12 +309,12 @@ class CdpController extends NOCtools_Controller_Action
                     header( 'Content-type: text/plain' );
                     header( 'Content-Disposition: attachment; filename="' . $file . '.dot"' );
                     Zend_Controller_Action_HelperBroker::removeHelper( 'viewRenderer' );
-                    echo $this->view->render( 'cdp/rstp-topology-graph.dot' );
+                    echo $this->view->render( 'cdp/stp-topology-graph.dot' );
                     return;
                 }
 
-                $this->getSessionNamespace()->rstp_topology_file
-                    = $this->generateDotGraph( $file, $this->view->render( 'cdp/rstp-topology-graph.dot' ), APPLICATION_PATH . '/../var/tmp' );
+                $this->getSessionNamespace()->stp_topology_file
+                    = $this->generateDotGraph( $file, $this->view->render( 'cdp/stp-topology-graph.dot' ), APPLICATION_PATH . '/../var/tmp' );
 
             }while( false );
         }
@@ -320,15 +325,20 @@ class CdpController extends NOCtools_Controller_Action
      *
      * @see rstpTopologyAction()
      * @param string $device The device to query
-     * @param int $vlanid The VLAN id to query
+      *@param string $type Either 'mst' or else 'rstp' assumed
+     * @param int $instance The VLAN / MST instance id to query
      * @return array Array of roles for participating ports (empty array of none or if device could not be queried)
      */
-    private function _rstpTopologyPortRoles( $device, $vlanid )
+    private function _stpTopologyPortRoles( $device, $type, $instance )
     {
         try
         {
             $_h = new \OSS_SNMP\SNMP( $device, $this->_options['community'] );
-            return $_h->useCisco_RSTP()->rstpPortRole( $vlanid, true );
+            
+            if( $type == 'mst' )
+                return $_h->useCisco_MST()->portRoles( $instance, true );
+            else
+                return $_h->useCisco_RSTP()->portRoles( $instance, true );
         }
         catch( Exception $e )
         {
@@ -340,13 +350,13 @@ class CdpController extends NOCtools_Controller_Action
      * Serve generated image from rstpTopologyAction()
      * @see CdpController::rstpTopologyAction()
      */
-    public function imgRstpTopologyAction()
+    public function imgStpTopologyAction()
     {
-        if( isset( $this->getSessionNamespace()->rstp_topology_file ) )
+        if( isset( $this->getSessionNamespace()->stp_topology_file ) )
         {
             Zend_Controller_Action_HelperBroker::removeHelper('viewRenderer');
             header( 'content-type: image/png' );
-            readfile( $this->getSessionNamespace()->rstp_topology_file );
+            readfile( $this->getSessionNamespace()->stp_topology_file );
         }
     }
 

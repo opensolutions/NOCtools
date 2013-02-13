@@ -42,7 +42,7 @@ digraph G {
 
             {if not $skipSwitch}
                 {assign var="ports" value=0}
-                {include assign="portGraph" file="./rstp-topology-graph-ports.dot" scope=parent}
+                {include assign="portGraph" file="./stp-topology-graph-ports.dot" scope=parent}
 
                 "{$feSwitch}" [ shape="plaintext", rank="{if substr( $feSwitch, 0, 2 ) eq 'cr'}2{elseif substr( $feSwitch, 0, 2 ) eq 'cd'}3{else}1{/if}", label=<
 
