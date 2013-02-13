@@ -141,6 +141,37 @@ class StpController extends NOCtools_Controller_Action
             exit( 0 );
         }
     }
-    
+     
 
+    public function cliPortRolesDeltaAction()
+    {
+    	$devices = [];
+OSS_Debug::dd( $devices );
+		foreach( $this->_devices as $d )
+		{
+			$devices[ $d ] = [];
+			 
+			try
+			{
+				$device = new \OSS_SNMP\SNMP( $d, $this->_options['community'] );
+				
+				$devices[$d]['instances'] = $device->useCisco_SMST()->instances();
+				
+				foreach( $devices[$d]['instances'] as $iid => $iname )
+				{
+					$devices[$d]['instance_roles'][$iid] = $device->useCisco_MST()->portRoles( $iid, true );
+				}
+				
+				print_r( $devices[ $d ] );
+			}
+			catch( \OSS_SNMP\Exception $e )
+			{
+				continue;
+				return;
+			}
+				
+		}
+    }
 }
+
+
