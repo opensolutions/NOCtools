@@ -96,6 +96,8 @@ class CdpController extends NOCtools_Controller_Action
         }
 
         $file = $this->generateGraphFilename( array( $cdp_root ) );
+        
+        Zend_Controller_Action_HelperBroker::removeHelper('viewRenderer');
         header( 'content-type: image/png' );
         readfile( $this->generateDotGraph( $file, $this->view->render( 'cdp/img-neighbours-graph.dot' ) ) );
     }
@@ -171,6 +173,7 @@ class CdpController extends NOCtools_Controller_Action
     {
         if( isset( $this->getSessionNamespace()->l2_topology_file ) )
         {
+            Zend_Controller_Action_HelperBroker::removeHelper('viewRenderer');
             header( 'content-type: image/png' );
             readfile( $this->getSessionNamespace()->l2_topology_file );
         }
@@ -341,6 +344,7 @@ class CdpController extends NOCtools_Controller_Action
     {
         if( isset( $this->getSessionNamespace()->rstp_topology_file ) )
         {
+            Zend_Controller_Action_HelperBroker::removeHelper('viewRenderer');
             header( 'content-type: image/png' );
             readfile( $this->getSessionNamespace()->rstp_topology_file );
         }

@@ -2,7 +2,7 @@
 
 <div class="container">
 
-<h1>NOCtools - Spanning Tree Utilities - {$type|upper} VLAN Port Roles</h1>
+<h1>NOCtools - Spanning Tree Utilities - {$type|upper} Port Roles</h1>
 
 <br />
 
@@ -14,7 +14,7 @@
 
     <div class="span3">
         <p>
-            This tool will allow you to see the port {$type|upper} roles per VLAN
+            This tool will allow you to see the port {$type|upper} roles per instance
             for a given switch.
         </p>
         <p>
@@ -35,15 +35,15 @@
     </div>
 
     <div class="span3">
-        {if isset( $vlans )}
+        {if isset( $instances )}
             <p>
-                Select a VLAN below if you wish to limit the results to a single VLAN.
+                Select an instance below if you wish to limit the results to a single instance.
             </p>
             <p>
-                <select id="limitToVlan" name="limitToVlan" data-placeholder="Optionally choose a VLAN..." class="chzn-select-deselect span3">
+                <select id="limitToInstance" name="limitToInstance" data-placeholder="Optionally choose an instance..." class="chzn-select-deselect span3">
                     <option></option>
-                    {foreach $vlans as $vid => $vname}
-                        <option value="{$vid}" {if isset( $limitToVlan ) and $limitToVlan neq false and $vid eq $limitToVlan}selected="selected"{/if}>{$vid} - {$vname}</option>
+                    {foreach $instances as $iid => $iname}
+                        <option value="{$iid}" {if isset( $limitToInstance ) and $limitToInstance neq false and $iid eq $limitToInstance}selected="selected"{/if}>{$iid} - {$iname}</option>
                     {/foreach}
                 </select>
             </p>
@@ -61,12 +61,12 @@
 
 </div>
 
-{if isset( $vlans )}
+{if isset( $instances )}
 
 <br />
 
-{if isset( $limitToVlan ) and $limitToVlan}
-    <h4>Port {$type|upper} Roles for VLAN {$vlans.$limitToVlan} ({$limitToVlan}) on {$portRolesDevice}</h4>
+{if isset( $limitToInstance ) and $limitToInstance}
+    <h4>Port {$type|upper} Roles for instance {$instances.$limitToInstance} ({$limitToInstance}) on {$portRolesDevice}</h4>
 
     <div class="row">
         <div class="span3">&nbsp;</div>
@@ -86,17 +86,17 @@
                         {$ports.$portId}
                     </td>
                     <td>
-                        {if isset( $roles.$vid.$portId )}
+                        {if isset( $roles.$limitToInstance.$portId )}
                             <label class="label" style="text-align: center;
-                                {if $roles.$vid.$portId eq 'root'}
+                                {if $roles.$limitToInstance.$portId eq 'root'}
                                     background-color: #6495ED;
-                                {elseif $roles.$vid.$portId eq 'designated'}
+                                {elseif $roles.$limitToInstance.$portId eq 'designated'}
                                     background-color: #00aa00;
-                                {elseif $roles.$vid.$portId eq 'alternate'}
+                                {elseif $roles.$limitToInstance.$portId eq 'alternate'}
                                     background-color: red;
-                                {elseif $roles.$vid.$portId eq 'backup'}
+                                {elseif $roles.$limitToInstance.$portId eq 'backup'}
                                     background-color: orange;
-                                {/if}">{$roles.$vid.$portId|capitalize}</label>
+                                {/if}">{$roles.$limitToInstance.$portId|capitalize}</label>
                         {/if}
                     </td>
                 </tr>
@@ -108,10 +108,10 @@
     </div>
 
 {else}
-    <h4>Port {$type|upper} Roles for All VLANs on {$portRolesDevice}</h4>
+    <h4>Port {$type|upper} Roles for All Instances on {$portRolesDevice}</h4>
 
     <p>
-        Note that blank cells mean that that port is not participating in {$type|upper} for the given VLAN / is not a member of the given VLAN.
+        Note that blank cells mean that that port is not participating in {$type|upper} for the given instance.
     </p>
 
     <table class="table">
@@ -125,25 +125,25 @@
         </tr>
     </thead>
     <tbody>
-    {foreach $vlans as $vid => $vname}
+    {foreach $instances as $iid => $iname}
         <tr>
-            <td>{$vid}</td>
-            <td>{$vname}</td>
+            <td>{$iid}</td>
+            <td>{$iname}</td>
             {foreach $portsInSTP as $portId}
                 <td>
-                    {if isset( $roles.$vid.$portId )}
+                    {if isset( $roles.$iid.$portId )}
                         <label class="label
-                            {if $roles.$vid.$portId eq 'root'}
+                            {if $roles.$iid.$portId eq 'root'}
                                 label-success
-                            {elseif $roles.$vid.$portId eq 'designated'}
+                            {elseif $roles.$iid.$portId eq 'designated'}
                                 label-success
-                            {elseif $roles.$vid.$portId eq 'alternate'}
+                            {elseif $roles.$iid.$portId eq 'alternate'}
                                 label-important
-                            {elseif $roles.$vid.$portId eq 'backup'}
+                            {elseif $roles.$iid.$portId eq 'backup'}
                                 label-error
                             {else}
                                 label-info
-                            {/if}" style="text-align: center">{$roles.$vid.$portId|capitalize}</label>
+                            {/if}" style="text-align: center">{$roles.$iid.$portId|capitalize}</label>
                     {/if}
                 </td>
             {/foreach}

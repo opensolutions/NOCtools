@@ -33,7 +33,7 @@ cmd.dot = "/usr/bin/dot"
 
 
 ;; The class to use for custom utilites. You should extend this / create your own
-utilsClass = 'OSS_NOCtools_Utils'
+utilsClass = 'NOCtools_Utils'
 
 
 ;; Selectivily disable components you do not want by setting to false
