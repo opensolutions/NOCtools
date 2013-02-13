@@ -32,7 +32,6 @@
 
 class StpController extends NOCtools_Controller_Action
 {
-
     /**
      * The default action - show the home page
      */
@@ -41,16 +40,14 @@ class StpController extends NOCtools_Controller_Action
     }
 
     /**
-     * Compare VLANs configured across devices.
-     *
-     * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Comparison
      */
-    public function rstpPortRolesAction()
+    public function portRolesAction()
     {
         if( $this->getRequest()->isPost() )
         {
-            $this->view->rstpPortRolesDevice = $device      = $this->_getParam( 'rstpPortRolesDevice' );
-            $this->view->limitToVlan         = $limitToVlan = $this->_getParam( 'limitToVlan', false );
+            $this->view->portRolesDevice = $device      = $this->_getParam( 'portRolesDevice' );
+            $this->view->limitToVlan     = $limitToVlan = $this->_getParam( 'limitToVlan', false );
+            $this->view->type            = $type        = $this->getParam( 'type', 'rstp' );
 
             try
             {
@@ -63,9 +60,9 @@ class StpController extends NOCtools_Controller_Action
                 return;
             }
 
-            $roles       = array();
-            $unknowns    = array();
-            $portsInRSTP = array();
+            $roles       = [];
+            $unknowns    = [];
+            $portsInSTP  = [];
 
             if( $limitToVlan && isset( $vlans[ $limitToVlan ] ) )
             {
@@ -78,11 +75,14 @@ class StpController extends NOCtools_Controller_Action
             {
                 try
                 {
-                    $roles[ $vid ] = $host->useCisco_RSTP()->rstpPortRole( $vid, true );
+                	if( $type == 'mst' )
+    	                $roles[ $vid ] = $host->useCisco_RSTP()->mstPortRole( $vid, true );
+                	else
+	                	$roles[ $vid ] = $host->useCisco_RSTP()->rstpPortRole( $vid, true );
 
                     foreach( $roles[ $vid ] as $portId => $role )
-                        if( !isset( $portsInRSTP[ $portId ] ) )
-                            $portsInRSTP[ $portId ] = $portId;
+                        if( !isset( $portsInSTP[ $portId ] ) )
+                            $portsInSTP[ $portId ] = $portId;
                 }
                 catch( \OSS_SNMP\Exception $e )
                 {
@@ -90,8 +90,8 @@ class StpController extends NOCtools_Controller_Action
                 }
             }
 
-            ksort( $portsInRSTP, SORT_NUMERIC );
-            $this->view->portsInRSTP = $portsInRSTP;
+            ksort( $portsInSTP, SORT_NUMERIC );
+            $this->view->portsInSTP  = $portsInSTP;
             $this->view->ports       = $host->useIface()->names();
             $this->view->vlans       = $vlans;
             $this->view->roles       = $roles;

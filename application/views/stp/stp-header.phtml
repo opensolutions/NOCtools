@@ -11,16 +11,16 @@
         <h3>RSTP VLAN Port Roles</h3>
 
         <p>
-            This tool will allow you to see the port RSTP roles per VLAN
+            This tool will allow you to see the RSTP port roles per VLAN
             for a given switch.
         </p>
         <p>
             {if isset( $_devices ) and count( $_devices )}
-            <form action="{genUrl controller="stp" action="rstp-port-roles"}" method="post">
-                <select name="rstpPortRolesDevice" data-placeholder="Choose a device..." class="chzn-select span3">
+            <form action="{genUrl controller="stp" action="port-roles"}" method="post" type="rstp">
+                <select name="portRolesDevice" data-placeholder="Choose a device..." class="chzn-select span3">
                     <option></option>
                     {foreach $_devices as $d}
-                        <option value="{$d}" {if isset( $rstpPortRolesDevice ) and $rstpPortRolesDevice eq $d}selected="selected"{/if}>{$d}</option>
+                        <option value="{$d}" {if isset( $portRolesDevice ) and $portRolesDevice eq $d}selected="selected"{/if}>{$d}</option>
                     {/foreach}
                 </select>
                 <br /><br />
@@ -34,6 +34,29 @@
     </div>
 
     <div class="span3">
+        <h3>MST VLAN Port Roles</h3>
+
+        <p>
+            This tool will allow you to see the MST port roles per VLAN
+            for a given switch.
+        </p>
+        <p>
+            {if isset( $_devices ) and count( $_devices )}
+            <form action="{genUrl controller="stp" action="port-roles" type="mst"}" method="post">
+                <select name="portRolesDevice" data-placeholder="Choose a device..." class="chzn-select span3">
+                    <option></option>
+                    {foreach $_devices as $d}
+                        <option value="{$d}" {if isset( $portRolesDevice ) and $portRolesDevice eq $d}selected="selected"{/if}>{$d}</option>
+                    {/foreach}
+                </select>
+                <br /><br />
+                <input type="submit" value="Submit &raquo;" class="btn" />
+                </form>
+            {else}
+                <span class="label label-important">ERROR</span> No devices defined in:<br /><br />
+                <code>application/configs/devices.ini</code>
+            {/if}
+        </p>
     </div>
 
     <div class="span3">
