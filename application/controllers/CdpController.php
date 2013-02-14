@@ -225,10 +225,10 @@ class CdpController extends NOCtools_Controller_Action
         {
             do
             {
-                if( $instance && $this->getParam( 'excludeNonParticipants', null ) === null )
+                if( $instance !== false && $this->getParam( 'excludeNonParticipants', null ) === null )
                     $this->view->excludeNonParticipants = $excludeNonParticipants = false;
 
-                if( $instance && $this->getParam( 'showPortRoles', null ) === null )
+                if( $instance !== false && $this->getParam( 'showPortRoles', null ) === null )
                     $this->view->showPortRoles = $showPortRoles = false;
 
                 $this->view->ignoreList = ( isset( $this->view->ignoreList ) ? $this->view->ignoreList : $this->getParam( 'ignoreList' ) );
@@ -243,9 +243,9 @@ class CdpController extends NOCtools_Controller_Action
                     break;
                 }
 
-                if( !$instance )
+                if( $instance === false )
                     break;
-
+                    
                 $devices = array();
                 $root->useCisco_CDP()->crawl( $devices, null, $ignoreList );
 
