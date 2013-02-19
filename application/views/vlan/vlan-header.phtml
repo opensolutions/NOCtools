@@ -20,6 +20,18 @@
     </div>
 
     <div class="span3">
+        <h3>VLAN Search</h3>
+
+        <p>
+            Enter a VLAN below and all devices (as listed in <code>devices.ini</code>)
+            will be searched for the existance of that VLAN.
+        </p>
+        <p>
+            <form class="form-search" action="{genUrl controller="vlan" action="search"}" method="post">
+                <input type="text" class="input-medium search-query" name="vlan" />
+                <button type="submit" class="btn">Search</button>
+            </form>
+        </p>
     </div>
 
     <div class="span3">

@@ -117,6 +117,66 @@ class VlanController extends NOCtools_Controller_Action
 
     }
 
+
+    /**
+     * A tool that will search all devices for a given VLAN number to indicate if it is
+     * configured there or not (as well as highlighting name mismatches).
+     *
+     * @see https://github.com/opensolutions/NOCtools/wiki/VLAN-Search
+     */
+    public function searchAction()
+    {
+        if( $this->getRequest()->isPost() )
+        {
+            // do we have a valid VLAN id?
+            $vlan = (int)$this->getParam( 'vlan', 0 );
+
+            if( !$vlan || !is_numeric( $vlan ) || $vlan < 1 || $vlan > 4095 )
+            {
+                $this->addMessage( "Invalid or no VLAN number / tag specified", OSS_Message::ERROR );
+            }
+            else
+            {
+                $this->view->vlan = $vlan;
+                $device_vlan = [];
+                $firstname = false;   // the name of the vlan as found on the first device
+                                      // used for comparison to subsequent devices
+
+                foreach( $this->_devices->devices as $d )
+                {
+                    try
+                    {
+                        $host = new \OSS_SNMP\SNMP( $d, $this->_options['community'] );
+                        $vlans = $host->useCisco_VTP()->vlanNames();
+                        unset( $host );
+                    }
+                    catch( \OSS_SNMP\Exception $e )
+                    {
+                        $device_vlan[ $d ] = '_NOCtools_ERR:01';
+                        continue;
+                    }
+
+                    if( !isset( $vlans[ $vlan ] ) )
+                    {
+                        $device_vlan[ $d ] = false;
+                        continue;
+                    }
+
+                    $device_vlan[ $d ] = $vlans[ $vlan ];
+
+                    if( $firstname === false )
+                        $firstname = $vlans[ $vlan ];
+
+                    unset( $vlans );
+                }
+
+                $this->view->firstname   = $firstname;
+                $this->view->device_vlan = $device_vlan;
+            }
+        }
+    }
+
+
     /**
      * AJAX function to provide a JSON list of VLANs configured on a particular device.
      *

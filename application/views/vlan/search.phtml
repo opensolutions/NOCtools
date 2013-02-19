@@ -1,0 +1,79 @@
+{include file="header.phtml"}
+
+<div class="container">
+
+<h1>NOCtools - VLAN Utilities - Search</h1>
+
+<br />
+
+{OSS_Message}
+
+<div class="row well">
+
+    <div class="span5">
+        <p>
+            Enter a VLAN number across and all devices (as listed in <code>devices.ini</code>&nbsp;)
+            will be searched for the existance of that VLAN.
+        </p>
+    </div>
+    <div class="span3 offset1">
+        <p>
+            <form class="form-search" action="{genUrl controller="vlan" action="search"}" method="post">
+                <input type="text" class="input-medium search-query" name="vlan" {if isset( $vlan )}value="{$vlan}"{/if} />
+                <button type="submit" class="btn">Search</button>
+            </form>
+        </p>
+
+    </div>
+</div>
+
+
+{if isset( $device_vlan )}
+
+<table class="table">
+<thead>
+    <tr>
+        <th>Device</th>
+        <th>VLAN Configured</th>
+        <th>VLAN Name</th>
+        <th>Notes</th>
+    </tr>
+</thead>
+<tbody>
+{foreach $device_vlan as $d => $v}
+    <tr>
+        <td>{$d}</td>
+        <td>
+            {if $v eq "_NOCtools_ERR:01"}
+                <span class="label label-warning"><i class="icon-warning-sign icon-white"></i></span>
+            {elseif $v eq false}
+                <span class="badge badge-important"><i class="icon-remove icon-white"></i></span>
+            {else}
+                <span class="badge badge-success"><i class="icon-ok icon-white"></i></span>
+            {/if}
+        </td>
+        <td>
+            {if $v neq "_NOCtools_ERR:01" and $v neq false}
+                {$v}
+            {/if}
+        </td>
+        <td>
+            {if $v neq "_NOCtools_ERR:01" and $v neq false and isset( $firstname ) and $firstname neq $v}
+                <span class="label label-warning"><i class="icon-warning-sign icon-white"></i> Name Mismatch!</span>
+            {/if}
+            {if $v eq "_NOCtools_ERR:01"}
+                <span class="label label-warning"><i class="icon-warning-sign icon-white"></i> No such OID / Could not poll device!</span>
+            {/if}
+        </td>
+    </tr>
+{/foreach}
+</tbody>
+</table>
+
+{/if} {* isset( $device_vlan ) *}
+
+<br /><br /><br />
+
+</div>
+
+{include file="footer.phtml"}
